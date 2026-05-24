@@ -7,10 +7,11 @@ import EscenaBase from './escenaBase.js';
  */
 const config = {
     type: Phaser.AUTO,
-    width: 1280,
-    height: 768,
+    width: window.innerWidth,
+    height: window.innerHeight,
     backgroundColor: '#5496ec',
     pixelArt: true,
+    antialias: false,
     physics: {
         default: 'arcade',
         arcade: {
