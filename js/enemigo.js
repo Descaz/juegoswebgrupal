@@ -15,7 +15,7 @@ export default class Enemigo extends Phaser.Physics.Arcade.Sprite {
 
     // Hacemos que el enemigo rebote al chocar contra los bordes del mundo
     this.setCollideWorldBounds(true);
-    this.setBounce(1); // Rebote completo (100%)
+    this.setBounce(0.1); // Rebote completo (100%)
 
     // Asignamos una velocidad aleatoria al enemigo al crearse
     // Esto hace que se mueva automáticamente

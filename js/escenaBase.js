@@ -69,7 +69,7 @@ export default class EscenaBase extends Phaser.Scene {
         this.physics.add.collider(this.jugador, plataformas);
         // Creamos el enemigo que se mueve aleatoriamente
         this.enemigo = new Enemigo(this, 500, 100);
-        this.enemigo.setScale(3); // Cambia la escala al 50%
+        this.enemigo.setScale(5); // Cambia la escala al 50%
         this.physics.add.collider(this.enemigo, plataformas);
         this.physics.add.overlap(this.jugador, this.enemigo, this.colisionEnemigo, null, this);
 
