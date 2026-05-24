@@ -30,6 +30,6 @@ export class Bala extends Phaser.Physics.Arcade.Sprite {
         this.body.reset(x,y);
         this.setActive(true);
         this.setVisible(true);
-        this.setVelocityX(800);
-    }
-}
+        this.setVelocityX(800);      
+		  
+    }}
