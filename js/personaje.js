@@ -14,6 +14,9 @@ export default class Personaje extends Phaser.Physics.Arcade.Sprite{
     this.escena = escena;
     this.escena.add.existing(this);
     this.escena.physics.add.existing(this);
+    this.body.setSize(12, 14);
+    this.body.setOffset(3, 2);
+    
     this.keys = this.escena.input.keyboard.addKeys({
       left: Phaser.Input.Keyboard.KeyCodes.A,
       right: Phaser.Input.Keyboard.KeyCodes.D,
