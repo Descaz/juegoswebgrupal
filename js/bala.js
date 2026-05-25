@@ -1,19 +1,13 @@
 export default class BalaGroup extends Phaser.Physics.Arcade.Group {
-    constructor(scene) {
-		// Call the super constructor, passing in a world and a scene
-		super(scene.physics.world, scene);
- 
-		// Initialize the group
+    constructor(scene) {		
+		super(scene.physics.world, scene);	
 		this.createMultiple({
-			classType: Bala, // This is the class we create just below
-			frameQuantity: 5000, // Create 30 instances in the pool
+			classType: Bala, 
+			frameQuantity: 5000, //Cantidad de balas
 			active: false,
 			visible: false,
-			key: 'bala'
-            
+			key: 'bala'            
 		})
-
-
 	}
 
     dispararBala(x, y, direccion){
@@ -22,7 +16,6 @@ export default class BalaGroup extends Phaser.Physics.Arcade.Group {
 			bala.disparar(x, y, direccion);
 		}
     }
-
 }
 
 export class Bala extends Phaser.Physics.Arcade.Sprite {
@@ -35,16 +28,14 @@ export class Bala extends Phaser.Physics.Arcade.Sprite {
         this.setActive(true);
         this.setVisible(true);
         this.setVelocityX(800 * direccion);   
-		this.setScale(2);   
-		  
+		this.setScale(2);		  
     }
 	
 	preUpdate(time, delta) {
 		super.preUpdate(time, delta);
-
 		if(this.x > 2000 || this.x < -2000) {
 			this.setActive(false);
-			this.setVisible(false);
+			this.setVisible(false);			
 		}
 	}
 }
