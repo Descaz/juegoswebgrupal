@@ -24,9 +24,7 @@ export default class Personaje extends Phaser.Physics.Arcade.Sprite{
     })
     this.sonidoSalto = sonidoSalto; 
     //preparamos la animacion de andar
-
     this.tieneArma = false;  
-
     this.escena.anims.create({
       key: 'andar',
       frames: [
@@ -36,7 +34,6 @@ export default class Personaje extends Phaser.Physics.Arcade.Sprite{
       frameRate: 6,
       repeat: -1
     });
-
     this.escena.anims.create({
       key: 'andar_pistola',
       frames: [
@@ -46,9 +43,7 @@ export default class Personaje extends Phaser.Physics.Arcade.Sprite{
       ],
       frameRate: 6,
       repeat: -1
-    });
-
-    
+    });    
   }
 
   recogerArma(jugador, pistola) {
@@ -59,9 +54,8 @@ export default class Personaje extends Phaser.Physics.Arcade.Sprite{
   
   update() {
     const velocidad = 200;        
-    const velocidadSalto = -600;
+    const velocidadSalto = -800;
     const animacion = this.tieneArma ? 'andar_pistola' : 'andar';   
-    
     if (this.body.velocity.x > 0) {
       this.setFlipX(false)
     }

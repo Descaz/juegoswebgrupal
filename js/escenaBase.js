@@ -43,25 +43,44 @@ export default class EscenaBase extends Phaser.Scene {
         const fondo = map.createLayer('fondo', tileset, 0, 0);
         const plataformas = map.createLayer('plataformas', tileset, 0, 0);
         const detalles = map.createLayer('detalles', tileset, 0, 0);
+        const muerte = map.createLayer('death', tileset, 0, 0);
         fondo.setScale(escalaVertical);
         plataformas.setScale(escalaVertical);
         detalles.setScale(escalaVertical);
+        muerte.setScale(escalaVertical);
         const anchoEscalado = map.widthInPixels * escalaVertical;
         const altoEscalado = map.heightInPixels * escalaVertical;              
         this.cameras.main.setBounds(0, 0, anchoEscalado, altoEscalado);
         this.physics.world.setBounds(0, 0, anchoEscalado, altoEscalado);
-        
-        //sonidos de salto y monedas
+        // COLISION PLATAFORMAS
+        plataformas.setCollisionByExclusion([-1]);        
+        plataformas.forEachTile(tile => {
+            if (tile.index !== -1) {
+                tile.setSize(map.tileWidth * escalaVertical, map.tileHeight * escalaVertical);
+                tile.updatePixelXY();
+            }
+        });
+        muerte.setCollisionByExclusion([-1]);        
+        muerte.forEachTile(tile => {
+            if (tile.index !== -1) {
+                tile.setSize(map.tileWidth * escalaVertical, map.tileHeight * escalaVertical);
+                tile.updatePixelXY();
+            }
+        });
+
+        //sonidos
         this.sonidoSalto = this.sound.add('saltar');
         this.sonidoDmg = this.sound.add('dmg');
         this.sonidoKill = this.sound.add('killenemigo');
         this.sonidoDisparo = this.sound.add('disparo');
         this.sonidoPowerUp = this.sound.add('powerup');
         //creamos al personaje del jugador y asignamos colliders
-        this.jugador = new Personaje(this, 100, 400, this.sonidoSalto);
+        this.jugador = new Personaje(this, 0, 1200, this.sonidoSalto);
         this.jugador.setScale(3); 
-        this.jugador.setCollideWorldBounds(true);    
         this.physics.add.collider(this.jugador, plataformas);
+        this.physics.add.collider(this.jugador, muerte, this.gameOver, null, this);        
+        this.jugador.setCollideWorldBounds(true);    
+        
 
         //creamos el arma
         this.pistola = this.physics.add.staticSprite(300, 300, 'pistola');
@@ -90,22 +109,14 @@ export default class EscenaBase extends Phaser.Scene {
                 bala.setVisible(false);
                 bala.body.stop();
             }
-        )
-        // COLISION PLATAFORMAS
-        plataformas.setCollisionByExclusion([-1]);        
-        plataformas.forEachTile(tile => {
-            if (tile.index !== -1) {
-                tile.setSize(map.tileWidth * escalaVertical, map.tileHeight * escalaVertical);
-                tile.updatePixelXY();
-            }
-        });       
+        )     
         //marcador de puntos
         this.puntos = 0;
         this.txtMarcador = this.add.text(10, 20, 'Puntos: ' + this.puntos);
         this.txtMarcador.setFontSize(30);
         this.txtMarcador.setStyle({fontStyle: 'bold italic'});
         this.txtMarcador.setFill('#000');
-        this.txtMarcador.setScrollFactor(0);           
+        this.txtMarcador.setScrollFactor(0);        
     }
 
     update() {
