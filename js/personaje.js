@@ -34,7 +34,7 @@ export default class Personaje extends Phaser.Physics.Arcade.Sprite{
   
   update() {
     const velocidad = 200;        
-    const velocidadSalto = -1000;   
+    const velocidadSalto = -600;   
     
     if (this.body.velocity.x > 0) {
       this.setFlipX(false)
@@ -61,9 +61,12 @@ export default class Personaje extends Phaser.Physics.Arcade.Sprite{
         this.play('spr_andando', false);       
       }
     }  
-    if(this.cursors.up.isDown && this.body.onFloor()) {
+    if(Phaser.Input.Keyboard.JustDown(this.cursors.up) && this.body.onFloor()) {
       this.setVelocityY(velocidadSalto);  
       this.sonidoSalto.play();    
-    }    
+    } 
+    if(Phaser.Input.Keyboard.JustUp(this.cursors.up) && this.body.velocity.y < 0) {
+      this.setVelocityY(this.body.velocity.y * 0.5);
+    }   
   }
 }
