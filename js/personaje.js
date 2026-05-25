@@ -16,18 +16,29 @@ export default class Personaje extends Phaser.Physics.Arcade.Sprite{
     this.cursors = this.escena.input.keyboard.createCursorKeys();
     this.sonidoSalto = sonidoSalto; 
     //preparamos la animacion de andar
-    this.animacionAndar =  {}
-    this.animacionAndar.key = 'spr_andando';
-    this.animacionAndar.frames = this.escena.anims.generateFrameNames('spr_player', {
-        prefix: 'spr_disparando',
-        start: 1,
-        end: 3,
-      });
-    this.animacionAndar.frameRate = 10;
-    this.animacionAndar.repeat = -1;
-    this.escena.anims.create(this.animacionAndar); 
 
     this.tieneArma = false;  
+
+    this.escena.anims.create({
+      key: 'andar',
+      frames: [
+        {key: 'spr_player', frame: 'spr_andando2'},
+        {key: 'spr_player', frame: 'spr_andando1'}
+      ],
+      frameRate: 6,
+      repeat: -1
+    });
+
+    this.escena.anims.create({
+      key: 'andar_pistola',
+      frames: [
+        {key: 'spr_player', frame: 'spr_disparando1'},
+        {key: 'spr_player', frame: 'spr_disparando2'},
+        {key: 'spr_player', frame: 'spr_disparando3'}
+      ],
+      frameRate: 6,
+      repeat: -1
+    });
 
     
   }
@@ -40,7 +51,8 @@ export default class Personaje extends Phaser.Physics.Arcade.Sprite{
   
   update() {
     const velocidad = 200;        
-    const velocidadSalto = -600;   
+    const velocidadSalto = -600;
+    const animacion = this.tieneArma ? 'andar_pistola' : 'andar';   
     
     if (this.body.velocity.x > 0) {
       this.setFlipX(false)
@@ -52,19 +64,19 @@ export default class Personaje extends Phaser.Physics.Arcade.Sprite{
     if (this.cursors.left.isDown) {
       this.setVelocityX(-velocidad);    
       if (this.body.onFloor()) {
-        this.play('spr_andando', true);
+        this.play(animacion, true);
       }   
     } 
     else if (this.cursors.right.isDown) {
       this.setVelocityX(velocidad); 
       if (this.body.onFloor()) {
-        this.play('spr_andando', true);
+        this.play(animacion, true);
       }     
     }    
     else {          
       this.setVelocityX(0);        
       if (this.body.onFloor()) {
-        this.play('spr_andando', false);       
+        this.play(animacion, false);       
       }
     }  
     if(Phaser.Input.Keyboard.JustDown(this.cursors.up) && this.body.onFloor()) {
