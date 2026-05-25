@@ -4,6 +4,9 @@
  * 
  */
 
+import BalaGroup from './bala.js';
+import Bala from './bala.js';
+
 export default class Personaje extends Phaser.Physics.Arcade.Sprite{
   constructor(escena, x, y, sonidoSalto) {
     super(escena, x, y, 'jugador');
@@ -16,19 +19,22 @@ export default class Personaje extends Phaser.Physics.Arcade.Sprite{
     this.animacionAndar =  {}
     this.animacionAndar.key = 'spr_andando';
     this.animacionAndar.frames = this.escena.anims.generateFrameNames('spr_player', {
-        prefix: 'spr_andando',
+        prefix: 'spr_disparando',
         start: 1,
-        end: 2,
+        end: 3,
       });
     this.animacionAndar.frameRate = 10;
     this.animacionAndar.repeat = -1;
-    this.escena.anims.create(this.animacionAndar);  
+    this.escena.anims.create(this.animacionAndar); 
 
+
+
+    
   }
-
+  
   update() {
     const velocidad = 200;        
-    const velocidadSalto = -400;   
+    const velocidadSalto = -1000;   
     
     if (this.body.velocity.x > 0) {
       this.setFlipX(false)
@@ -58,6 +64,6 @@ export default class Personaje extends Phaser.Physics.Arcade.Sprite{
     if(this.cursors.up.isDown && this.body.onFloor()) {
       this.setVelocityY(velocidadSalto);  
       this.sonidoSalto.play();    
-    }
+    }    
   }
 }
