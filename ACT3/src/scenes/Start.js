@@ -1,3 +1,4 @@
+import { Gusano } from '../Gusano.js';
 export class Start extends Phaser.Scene {
 
     constructor() {
@@ -7,6 +8,8 @@ export class Start extends Phaser.Scene {
     preload() {
         this.load.tilemapTiledJSON('mapa1', 'assets/mapa1.json');
         this.load.image('tileset', 'assets/tilesets/tilemap.png');
+        this.load.image('gusano_frame1', 'assets/Tiles/tile_0055.png');
+        this.load.image('gusano_frame2', 'assets/Tiles/tile_0056.png');
     }
 
     create() {
@@ -52,11 +55,19 @@ export class Start extends Phaser.Scene {
         this.jugador.body.setGravityY(800);
 
         this.physics.add.collider(this.jugador, plataformas);
+        //DEBUG RATON
+        this.debugText = this.add.text(10, 10, '', { fill: '#000000', fontSize: '16px' });
+        this.debugText.setScrollFactor(0);  
 
-        
+        // ENEMIGO GUSANO
+        this.enemy = new Gusano(this, 700, 390, 'gusano_frame1', 620, 1030);
     }
 
     update() {
-        
+        this.enemy.update();
+        this.debugText.setText(
+    'X: ' + Math.floor(this.input.activePointer.worldX) +
+    ' Y: ' + Math.floor(this.input.activePointer.worldY)
+);
     }
 }
