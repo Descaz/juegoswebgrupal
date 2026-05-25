@@ -23,8 +23,8 @@ export default class EscenaBase extends Phaser.Scene {
         //carga de sprites jugador y objetos
         this.load.image('moneda', './resources/moneda.png');
         this.load.image('bala', './resources/assets/Tiles/tile_0044.png');
-        this.load.image('gusano_frame1', 'assets/Tiles/tile_0055.png');
-        this.load.image('gusano_frame2', 'assets/Tiles/tile_0056.png');
+        this.load.image('gusano_frame1', 'resources/assets/Tiles/tile_0055.png');
+        this.load.image('gusano_frame2', 'resources/assets/Tiles/tile_0056.png');
         this.load.image('pistola', './resources/assets/Tiles/tile_0050.png');        
         //carga de sonidos
         this.load.audio('musica', './resources/music.mp3'); //musica de fondo
