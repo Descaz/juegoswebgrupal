@@ -1,4 +1,5 @@
 import EscenaBase from './escenaBase.js';
+import { Start } from './menu.js';
 
 /** 
  * 
@@ -7,8 +8,14 @@ import EscenaBase from './escenaBase.js';
  */
 const config = {
     type: Phaser.AUTO,
-    width: 800,
-    height: 600,
+    width: 1920,
+    height: 1080,
+    scale: {
+        mode: Phaser.Scale.FIT,
+        autoCenter: Phaser.Scale.CENTER_BOTH,
+        width: 1920,
+        height: 1080
+    },
     backgroundColor: '#5496ec',
     pixelArt: true,
     antialias: false,
@@ -19,7 +26,7 @@ const config = {
             debug: false
         }
     },
-    scene: [EscenaBase]
+    scene: [Start, EscenaBase]
 };
 
 const game = new Phaser.Game(config);

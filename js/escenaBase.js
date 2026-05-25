@@ -26,7 +26,6 @@ export default class EscenaBase extends Phaser.Scene {
         this.load.image('enemigo', './resources/assets/Tiles/tile_0055.png');
         this.load.image('pistola', './resources/assets/Tiles/tile_0050.png');        
         //carga de sonidos
-        this.load.audio('musica', './resources/music.mp3'); //musica de fondo
         this.load.audio('saltar', './resources/SoundJump1.wav'); //salto
         this.load.audio('dmg', './resources/SoundPlayerHit.wav'); //daño
         this.load.audio('killenemigo', './resources/SoundEnemyDeath.wav'); //muerte enemigo
@@ -40,7 +39,7 @@ export default class EscenaBase extends Phaser.Scene {
         //creamos el mapa    
         const map = this.make.tilemap({key : 'mapa1'});
         const tileset = map.addTilesetImage('tiles2', 'tileset');        
-        const escalaVertical = window.innerHeight / map.heightInPixels;
+        const escalaVertical = this.scale.height / map.heightInPixels;
         const fondo = map.createLayer('fondo', tileset, 0, 0);
         const plataformas = map.createLayer('plataformas', tileset, 0, 0);
         const detalles = map.createLayer('detalles', tileset, 0, 0);
@@ -51,10 +50,7 @@ export default class EscenaBase extends Phaser.Scene {
         const altoEscalado = map.heightInPixels * escalaVertical;              
         this.cameras.main.setBounds(0, 0, anchoEscalado, altoEscalado);
         this.physics.world.setBounds(0, 0, anchoEscalado, altoEscalado);
-       
-        //crea la musica de fondo y se reproduce
-        this.musica = this.sound.add('musica', { loop: true, volume: 0.5 });
-        this.musica.play(); 
+        
         //sonidos de salto y monedas
         this.sonidoSalto = this.sound.add('saltar');
         this.sonidoDmg = this.sound.add('dmg');
