@@ -25,6 +25,7 @@ export default class EscenaBase extends Phaser.Scene {
         this.load.image('moneda', './resources/moneda.png');
         this.load.image('bala', './resources/assets/Tiles/tile_0044.png');
         this.load.image('enemigo', './resources/assets/Tiles/tile_0055.png');
+        this.load.image('pistola', './resources/assets/Tiles/tile_0050.png');
         
         //carga de sonidos
         this.load.audio('musica', './resources/music.mp3');
@@ -67,6 +68,19 @@ export default class EscenaBase extends Phaser.Scene {
         this.jugador.setScale(3); 
         this.jugador.setCollideWorldBounds(true);    
         this.physics.add.collider(this.jugador, plataformas);
+
+        //creamos el arma
+        this.pistola = this.physics.add.staticSprite(300, 300, 'pistola');
+        this.pistola.setScale(3);
+
+        this.physics.add.overlap(
+            this.jugador,
+            this.pistola,
+            this.jugador.recogerArma,
+            null,
+            this.jugador
+        );
+
         // Creamos el enemigo que se mueve aleatoriamente
         this.enemigo = new Enemigo(this, 500, 100);
         this.enemigo.setScale(5); // Cambia la escala al 50%
@@ -76,6 +90,14 @@ export default class EscenaBase extends Phaser.Scene {
         this.balaGroup = new BalaGroup(this);
         this.addEvents();
         this.cameras.main.startFollow(this.jugador);
+        this.physics.add.collider(this.balaGroup, this.enemigo, this.colisionEnemigoBala, null, this);
+        this.physics.add.collider(this.balaGroup, plataformas,
+            (bala) => {
+                bala.setActive(false);
+                bala.setVisible(false);
+                bala.body.stop();
+            }
+        )
         // COLISION PLATAFORMAS
         plataformas.setCollisionByExclusion([-1]);
         
@@ -114,8 +136,9 @@ export default class EscenaBase extends Phaser.Scene {
     }
 
     disparar() {
-        this.balaGroup.dispararBala(this.jugador.x+20, this.jugador.y);
-        this.physics.add.collider(this.balaGroup, this.enemigo, this.colisionEnemigoBala, null, this);
+        const direccion = this.jugador.flipX ? -1 : 1;
+        if (!this.jugador.tieneArma) return;
+        this.balaGroup.dispararBala(this.jugador.x+20, this.jugador.y, direccion);
         this.sonidoRecolectar.play();
     }
     
