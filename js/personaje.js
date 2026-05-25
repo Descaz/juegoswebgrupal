@@ -13,7 +13,11 @@ export default class Personaje extends Phaser.Physics.Arcade.Sprite{
     this.escena = escena;
     this.escena.add.existing(this);
     this.escena.physics.add.existing(this);
-    this.cursors = this.escena.input.keyboard.createCursorKeys();
+    this.keys = this.escena.input.keyboard.addKeys({
+      left: Phaser.Input.Keyboard.KeyCodes.A,
+      right: Phaser.Input.Keyboard.KeyCodes.D,
+      jump: Phaser.Input.Keyboard.KeyCodes.SPACE,
+    })
     this.sonidoSalto = sonidoSalto; 
     //preparamos la animacion de andar
 
@@ -61,13 +65,13 @@ export default class Personaje extends Phaser.Physics.Arcade.Sprite{
       this.setFlipX(true);
     }
     //movimiento
-    if (this.cursors.left.isDown) {
+    if (this.keys.left.isDown) {
       this.setVelocityX(-velocidad);    
       if (this.body.onFloor()) {
         this.play(animacion, true);
       }   
     } 
-    else if (this.cursors.right.isDown) {
+    else if (this.keys.right.isDown) {
       this.setVelocityX(velocidad); 
       if (this.body.onFloor()) {
         this.play(animacion, true);
@@ -79,11 +83,11 @@ export default class Personaje extends Phaser.Physics.Arcade.Sprite{
         this.play(animacion, false);       
       }
     }  
-    if(Phaser.Input.Keyboard.JustDown(this.cursors.up) && this.body.onFloor()) {
+    if(Phaser.Input.Keyboard.JustDown(this.keys.jump) && this.body.onFloor()) {
       this.setVelocityY(velocidadSalto);  
       this.sonidoSalto.play();    
     } 
-    if(Phaser.Input.Keyboard.JustUp(this.cursors.up) && this.body.velocity.y < 0) {
+    if(Phaser.Input.Keyboard.JustUp(this.keys.jump) && this.body.velocity.y < 0) {
       this.setVelocityY(this.body.velocity.y * 0.5);
     }   
   }
