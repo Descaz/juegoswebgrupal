@@ -1,6 +1,6 @@
 export  class Gusano extends Phaser.Physics.Arcade.Sprite {
 
-    constructor(scene, x, y, gusano_frame1){
+    constructor(scene, x, y, gusano_frame1, xMin, xMax){
         super(scene, x, y, gusano_frame1)
 
         scene.add.existing(this);
@@ -24,9 +24,22 @@ export  class Gusano extends Phaser.Physics.Arcade.Sprite {
         this.play('gusano_anim')
 
         this.setScale(5);
+        
+        this.xMin = xMin;
+        this.xMax = xMax;
+        this.direccion = 1;
+        this.velocidad = 100;
     }
 
     update(){
+this.setVelocityX(this.velocidad * this.direccion);
 
+if (this.x >= this.xMax) 
+    this.direccion = -1;
+else if (this.x <= this.xMin)
+    this.direccion = 1;
+
+    if (this.direccion == 1) this.setFlipX(false)
+    else if (this.direccion == -1) this.setFlipX(true)
 }
 }

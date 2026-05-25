@@ -55,12 +55,19 @@ export class Start extends Phaser.Scene {
         this.jugador.body.setGravityY(800);
 
         this.physics.add.collider(this.jugador, plataformas);
+        //DEBUG RATON
+        this.debugText = this.add.text(10, 10, '', { fill: '#000000', fontSize: '16px' });
+        this.debugText.setScrollFactor(0);  
 
         // ENEMIGO GUSANO
-        this.enemy = new Gusano(this, 700, 400, 'gusano_frame1');
+        this.enemy = new Gusano(this, 700, 390, 'gusano_frame1', 620, 1030);
     }
 
     update() {
-        
+        this.enemy.update();
+        this.debugText.setText(
+    'X: ' + Math.floor(this.input.activePointer.worldX) +
+    ' Y: ' + Math.floor(this.input.activePointer.worldY)
+);
     }
 }
