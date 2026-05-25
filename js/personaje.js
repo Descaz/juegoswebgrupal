@@ -27,9 +27,15 @@ export default class Personaje extends Phaser.Physics.Arcade.Sprite{
     this.animacionAndar.repeat = -1;
     this.escena.anims.create(this.animacionAndar); 
 
-
+    this.tieneArma = false;  
 
     
+  }
+
+  recogerArma(jugador, pistola) {
+    this.tieneArma = true;
+    
+    pistola.destroy();
   }
   
   update() {
