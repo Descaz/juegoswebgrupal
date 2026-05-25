@@ -1,5 +1,4 @@
 import Personaje from './personaje.js';
-import Enemigo from './enemigo.js';
 import Moneda from './moneda.js';
 import Pinchos from './pinchos.js';
 import BalaGroup from './bala.js';
@@ -23,8 +22,8 @@ export default class EscenaBase extends Phaser.Scene {
         //carga de sprites jugador y objetos
         this.load.image('moneda', './resources/moneda.png');
         this.load.image('bala', './resources/assets/Tiles/tile_0044.png');
-        this.load.image('gusano_frame1', 'resources/assets/Tiles/tile_0055.png');
-        this.load.image('gusano_frame2', 'resources/assets/Tiles/tile_0056.png');
+        this.load.image('gusano_frame1', './resources/assets/Tiles/tile_0055.png');
+        this.load.image('gusano_frame2', './resources/assets/Tiles/tile_0056.png');
         this.load.image('pistola', './resources/assets/Tiles/tile_0050.png');        
         //carga de sonidos
         this.load.audio('saltar', './resources/SoundJump1.wav'); //salto
@@ -75,7 +74,7 @@ export default class EscenaBase extends Phaser.Scene {
             this.jugador
         );
         //Creacion enemigo
-        this.enemigo = new Enemigo(this, 500, 100);
+        this.enemigo = new Gusano(this, 700, 390, 'gusano_frame1', 620, 1030);
         this.enemigo.setScale(5); 
         this.physics.add.collider(this.enemigo, plataformas);
         this.physics.add.overlap(this.jugador, this.enemigo, this.colisionEnemigo, null, this);
@@ -110,7 +109,10 @@ export default class EscenaBase extends Phaser.Scene {
     }
 
     update() {
-        this.jugador.update();            
+        this.jugador.update();  
+        if (this.enemigo && this.enemigo.active) {
+        this.enemigo.update();
+    }          
     }
 
     addEvents() {
