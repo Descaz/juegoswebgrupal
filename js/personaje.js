@@ -6,6 +6,7 @@
 
 import BalaGroup from './bala.js';
 import Bala from './bala.js';
+import EscenaBase from './escenaBase.js';
 
 export default class Personaje extends Phaser.Physics.Arcade.Sprite{
   constructor(escena, x, y, sonidoSalto) {
@@ -49,7 +50,7 @@ export default class Personaje extends Phaser.Physics.Arcade.Sprite{
 
   recogerArma(jugador, pistola) {
     this.tieneArma = true;
-    
+    this.escena.sonidoPowerUp.play();
     pistola.destroy();
   }
   
