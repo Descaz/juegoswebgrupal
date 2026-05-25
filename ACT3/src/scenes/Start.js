@@ -1,4 +1,4 @@
-import { Gusano } from '../Gusano.js';
+import Gusano from '/';
 export class Start extends Phaser.Scene {
 
     constructor() {

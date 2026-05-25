@@ -7,8 +7,8 @@ import EscenaBase from './escenaBase.js';
  */
 const config = {
     type: Phaser.AUTO,
-    width: 800,
-    height: 600,
+    width: innerWidth,
+    height: innerHeight,
     backgroundColor: '#5496ec',
     pixelArt: true,
     antialias: false,
