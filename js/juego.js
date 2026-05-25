@@ -1,4 +1,5 @@
 import EscenaBase from './escenaBase.js';
+import { Start } from './menu.js';
 
 /** 
  * 
@@ -19,7 +20,7 @@ const config = {
             debug: false
         }
     },
-    scene: [EscenaBase]
+    scene: [Start, EscenaBase]
 };
 
 const game = new Phaser.Game(config);
