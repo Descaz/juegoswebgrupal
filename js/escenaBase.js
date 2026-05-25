@@ -39,7 +39,7 @@ export default class EscenaBase extends Phaser.Scene {
         //creamos el mapa    
         const map = this.make.tilemap({key : 'mapa1'});
         const tileset = map.addTilesetImage('tiles2', 'tileset');        
-        const escalaVertical = window.innerHeight / map.heightInPixels;
+        const escalaVertical = this.scale.height / map.heightInPixels;
         const fondo = map.createLayer('fondo', tileset, 0, 0);
         const plataformas = map.createLayer('plataformas', tileset, 0, 0);
         const detalles = map.createLayer('detalles', tileset, 0, 0);

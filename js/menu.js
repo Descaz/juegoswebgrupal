@@ -12,25 +12,28 @@ export class Start extends Phaser.Scene {
     }
 
     create() {
-        this.background = this.add.tileSprite(860, 100, 800, 600, 'fondo');
-        this.background.setScale(2.5);
+        const width = this.scale.width;
+        const height = this.scale.height;
 
-        this.add.text(400, 200, 'EL CONEJO MALO', {
-            fontSize: '70px',
+        this.background = this.add.tileSprite(width, height + 130, width, height, 'fondo');
+        this.background.setScale(4.5);
+
+        this.add.text(width / 2, height * 0.25, 'EL CONEJO MALO', {
+            fontSize: '150px',
             fontFamily: 'Times New Roman',
             color: '#A64E0D',
             stroke: '#000000',
             strokeThickness: 6
         }).setOrigin(0.5);
 
-        this.add.text(403, 203, 'EL CONEJO MALO', {
-            fontSize: '70px',
+        this.add.text(width / 2 + 3, height * 0.25 + 3, 'EL CONEJO MALO', {
+            fontSize: '150px',
             fontFamily: 'Times New Roman',
             color: '#571208',
         }).setOrigin(0.5);
 
-        const botonJugar = this.add.text(400, 400, 'Jugar', {
-            fontSize: '30px',
+        const botonJugar = this.add.text(width / 2, height * 0.6, 'Jugar', {
+            fontSize: '70px',
             fontFamily: 'sans-serif',
             color: '#2D55B5',
             backgroundColor: '#ACB52D',
@@ -64,8 +67,8 @@ export class Start extends Phaser.Scene {
             repeat: -1
         });
 
-        this.personaje = this.add.sprite(400, 500, 'spr_player');
-        this.personaje.setScale(4);
+        this.personaje = this.add.sprite(width / 2, height * 0.82, 'spr_player');
+        this.personaje.setScale(8);
 
         this.personaje.play('andar_menu');
 
