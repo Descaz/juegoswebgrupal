@@ -64,7 +64,7 @@ export default class EscenaBase extends Phaser.Scene {
         this.physics.add.collider(this.jugador, plataformas);
 
         //creamos el arma
-        this.pistola = this.physics.add.staticSprite(300, 300, 'pistola');
+        this.pistola = this.physics.add.staticSprite(1700, 130, 'pistola');
         this.pistola.setScale(3);
         this.physics.add.overlap(
             this.jugador,
