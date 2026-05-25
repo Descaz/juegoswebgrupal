@@ -29,8 +29,8 @@ export default class EscenaBase extends Phaser.Scene {
         
         //carga de sonidos
         this.load.audio('musica', './resources/music.mp3');
-        this.load.audio('saltar', './resources/jump.mp3');
-        this.load.audio('coin', './resources/pickup.mp3');
+        this.load.audio('saltar', './resources/SoundJump1.wav');
+        //this.load.audio('coin', './resources/pickup.mp3');
         //carga de sprites de animacion
         this.load.atlas('spr_player', './resources/spr_player.png', './resources/spr_player_atlas.json');
     }   
@@ -62,7 +62,7 @@ export default class EscenaBase extends Phaser.Scene {
         this.musica.play(); 
         //sonidos de salto y monedas
         this.sonidoSalto = this.sound.add('saltar');
-        this.sonidoRecolectar = this.sound.add('coin');
+        //this.sonidoRecolectar = this.sound.add('coin');
         //creamos al personaje del jugador y asignamos colliders
         this.jugador = new Personaje(this, 100, 400, this.sonidoSalto);
         this.jugador.setScale(3); 
