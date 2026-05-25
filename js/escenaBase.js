@@ -90,6 +90,14 @@ export default class EscenaBase extends Phaser.Scene {
         this.balaGroup = new BalaGroup(this);
         this.addEvents();
         this.cameras.main.startFollow(this.jugador);
+        this.physics.add.collider(this.balaGroup, this.enemigo, this.colisionEnemigoBala, null, this);
+        this.physics.add.collider(this.balaGroup, plataformas,
+            (bala) => {
+                bala.setActive(false);
+                bala.setVisible(false);
+                bala.body.stop();
+            }
+        )
         // COLISION PLATAFORMAS
         plataformas.setCollisionByExclusion([-1]);
         
@@ -128,10 +136,9 @@ export default class EscenaBase extends Phaser.Scene {
     }
 
     disparar() {
+        const direccion = this.jugador.flipX ? -1 : 1;
         if (!this.jugador.tieneArma) return;
-        
-        this.balaGroup.dispararBala(this.jugador.x+20, this.jugador.y);
-        this.physics.add.collider(this.balaGroup, this.enemigo, this.colisionEnemigoBala, null, this);
+        this.balaGroup.dispararBala(this.jugador.x+20, this.jugador.y, direccion);
         this.sonidoRecolectar.play();
     }
     
