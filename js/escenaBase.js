@@ -21,7 +21,6 @@ export default class EscenaBase extends Phaser.Scene {
         this.load.tilemapTiledJSON('mapa1', './resources/assets/mapa1.json');
         this.load.image('tileset', './resources/assets/tilesets/tilemap.png');
         //carga de sprites jugador y objetos
-        this.load.image('jugador', './resources/prota.png');
         this.load.image('moneda', './resources/moneda.png');
         this.load.image('bala', './resources/assets/Tiles/tile_0044.png');
         this.load.image('enemigo', './resources/assets/Tiles/tile_0055.png');
@@ -31,6 +30,7 @@ export default class EscenaBase extends Phaser.Scene {
         this.load.audio('dmg', './resources/SoundPlayerHit.wav'); //daño
         this.load.audio('killenemigo', './resources/SoundEnemyDeath.wav'); //muerte enemigo
         this.load.audio('disparo', './resources/SoundShootRegular.wav'); //disparo
+        this.load.audio('powerup', './resources/SoundBonus.wav'); //powerup
         //carga de sprites de animacion
         this.load.atlas('spr_player', './resources/spr_player.png', './resources/spr_player_atlas.json');
     }   
@@ -56,6 +56,7 @@ export default class EscenaBase extends Phaser.Scene {
         this.sonidoDmg = this.sound.add('dmg');
         this.sonidoKill = this.sound.add('killenemigo');
         this.sonidoDisparo = this.sound.add('disparo');
+        this.sonidoPowerUp = this.sound.add('powerup');
         //creamos al personaje del jugador y asignamos colliders
         this.jugador = new Personaje(this, 100, 400, this.sonidoSalto);
         this.jugador.setScale(3); 
@@ -104,8 +105,7 @@ export default class EscenaBase extends Phaser.Scene {
         this.txtMarcador.setFontSize(30);
         this.txtMarcador.setStyle({fontStyle: 'bold italic'});
         this.txtMarcador.setFill('#000');
-        this.txtMarcador.setScrollFactor(0);   
-        
+        this.txtMarcador.setScrollFactor(0);           
     }
 
     update() {
