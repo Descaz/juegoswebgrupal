@@ -33,13 +33,13 @@ export class Start extends Phaser.Scene {
         }).setOrigin(0.5);
 
         const botonJugar = this.add.text(width / 2, height * 0.6, 'Jugar', {
-            fontSize: '70px',
+            fontSize: '100px',
             fontFamily: 'sans-serif',
             color: '#2D55B5',
-            backgroundColor: '#ACB52D',
+            backgroundColor: '#ccbf46',
             padding: {
-                x: 20,
-                y: 10
+                x: 50,
+                y: 20
             }
         })
         .setOrigin(0.5)
@@ -78,6 +78,5 @@ export class Start extends Phaser.Scene {
 
     update() {
         this.background.tilePositionX += 0.5;
-    }
-    
+    }    
 }
