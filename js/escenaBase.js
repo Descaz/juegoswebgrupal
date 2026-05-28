@@ -5,6 +5,8 @@ import Pinchos from './pinchos.js';
 import BalaGroup from './bala.js';
 import Bala from './bala.js';
 import Gusano from './Gusano.js';
+
+
 /**
  * Clase que regula la escena principal del juego.
  * 
@@ -44,7 +46,7 @@ export default class EscenaBase extends Phaser.Scene {
         const fondo = map.createLayer('fondo', tileset, 0, 0);
         const plataformas = map.createLayer('plataformas', tileset, 0, 0);
         const detalles = map.createLayer('detalles', tileset, 0, 0);
-        const muerte = map.createLayer('death', tileset, 0, 0);
+        const muerte = map.createLayer('morir', tileset, 0, 0);
         fondo.setScale(escalaVertical);
         plataformas.setScale(escalaVertical);
         detalles.setScale(escalaVertical);
@@ -62,12 +64,7 @@ export default class EscenaBase extends Phaser.Scene {
             }
         });
         muerte.setCollisionByExclusion([-1]);        
-        muerte.forEachTile(tile => {
-            if (tile.index !== -1) {
-                tile.setSize(map.tileWidth * escalaVertical, map.tileHeight * escalaVertical);
-                tile.updatePixelXY();
-            }
-        });
+        
 
         //sonidos
         this.sonidoSalto = this.sound.add('saltar');
@@ -80,8 +77,7 @@ export default class EscenaBase extends Phaser.Scene {
         this.jugador.setScale(3); 
         this.physics.add.collider(this.jugador, plataformas);
         this.physics.add.collider(this.jugador, muerte, this.gameOver, null, this);        
-        this.jugador.setCollideWorldBounds(true);    
-        
+        this.jugador.setCollideWorldBounds(true);          
 
         //creamos el arma
         this.pistola = this.physics.add.staticSprite(300, 300, 'pistola');
@@ -131,8 +127,8 @@ export default class EscenaBase extends Phaser.Scene {
     }    
     
     gameOver() {
-        this.musica.stop();
         this.scene.restart();
+       
     }
 
     disparar() {
