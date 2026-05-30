@@ -1,7 +1,4 @@
 import Personaje from './personaje.js';
-import Enemigo from './enemigo.js';
-import Moneda from './moneda.js';
-import Pinchos from './pinchos.js';
 import BalaGroup from './bala.js';
 import Bala from './bala.js';
 import Gusano from './Gusano.js';
