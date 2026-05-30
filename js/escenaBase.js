@@ -59,8 +59,8 @@ export default class EscenaBase extends Phaser.Scene {
         plataformas.setCollisionByExclusion([-1]);        
         plataformas.forEachTile(tile => {
             if (tile.index !== -1) {
-                tile.setSize(map.tileWidth * escalaVertical, map.tileHeight * escalaVertical);
-                tile.updatePixelXY();
+                tile.setSize(16, 4); 
+        tile.updatePixelXY();
             }
         });
         muerte.setCollisionByExclusion([-1]);        
