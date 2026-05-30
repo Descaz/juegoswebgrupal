@@ -131,10 +131,22 @@ export default class EscenaBase extends Phaser.Scene {
     disparar() {
         const direccion = this.jugador.flipX ? -1 : 1;
         if (!this.jugador.tieneArma) return;
+        this.balaGroup.dispararBala(this.jugador.x+20, this.jugador.y, direccion, 0);
+        this.balaGroup.dispararBala(this.jugador.x+20, this.jugador.y, direccion, 1);
+        this.balaGroup.dispararBala(this.jugador.x+20, this.jugador.y, direccion, 2);
+        this.balaGroup.dispararBala(this.enemigo.x+20, this.enemigo.y, direccion, 0);
+
+        this.sonidoDisparo.play();
+    }
+
+    dispararPowerUp() {
         this.balaGroup.dispararBala(this.jugador.x+20, this.jugador.y, direccion);
         this.sonidoDisparo.play();
     }
     
+    recogerPowerUp() {
+        powerup = true;
+    }
     colisionEnemigo(jugador, enemigo) {
         if (this.invulnerable) return;
         this.invulnerable = true;
