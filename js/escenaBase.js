@@ -1,9 +1,10 @@
 import Personaje from './personaje.js';
-import Moneda from './moneda.js';
-import Pinchos from './pinchos.js';
+import Enemigo from './enemigo.js';
 import BalaGroup from './bala.js';
 import Bala from './bala.js';
 import Gusano from './Gusano.js';
+
+
 /**
  * Clase que regula la escena principal del juego.
  * 
@@ -22,8 +23,8 @@ export default class EscenaBase extends Phaser.Scene {
         //carga de sprites jugador y objetos
         this.load.image('moneda', './resources/moneda.png');
         this.load.image('bala', './resources/assets/Tiles/tile_0044.png');
-        this.load.image('gusano_frame1', './resources/assets/Tiles/tile_0055.png');
-        this.load.image('gusano_frame2', './resources/assets/Tiles/tile_0056.png');
+        this.load.image('gusano_frame1', 'resources/assets/Tiles/tile_0055.png');
+        this.load.image('gusano_frame2', 'resources/assets/Tiles/tile_0056.png');
         this.load.image('pistola', './resources/assets/Tiles/tile_0050.png');        
         //carga de sonidos
         this.load.audio('saltar', './resources/SoundJump1.wav'); //salto
@@ -43,25 +44,38 @@ export default class EscenaBase extends Phaser.Scene {
         const fondo = map.createLayer('fondo', tileset, 0, 0);
         const plataformas = map.createLayer('plataformas', tileset, 0, 0);
         const detalles = map.createLayer('detalles', tileset, 0, 0);
+        const muerte = map.createLayer('morir', tileset, 0, 0);
         fondo.setScale(escalaVertical);
         plataformas.setScale(escalaVertical);
         detalles.setScale(escalaVertical);
+        muerte.setScale(escalaVertical);
         const anchoEscalado = map.widthInPixels * escalaVertical;
         const altoEscalado = map.heightInPixels * escalaVertical;              
         this.cameras.main.setBounds(0, 0, anchoEscalado, altoEscalado);
         this.physics.world.setBounds(0, 0, anchoEscalado, altoEscalado);
+        // COLISION PLATAFORMAS
+        plataformas.setCollisionByExclusion([-1]);        
+        plataformas.forEachTile(tile => {
+            if (tile.index !== -1) {
+                tile.setSize(16, 4); 
+        tile.updatePixelXY();
+            }
+        });
+        muerte.setCollisionByExclusion([-1]);        
         
-        //sonidos de salto y monedas
+
+        //sonidos
         this.sonidoSalto = this.sound.add('saltar');
         this.sonidoDmg = this.sound.add('dmg');
         this.sonidoKill = this.sound.add('killenemigo');
         this.sonidoDisparo = this.sound.add('disparo');
         this.sonidoPowerUp = this.sound.add('powerup');
         //creamos al personaje del jugador y asignamos colliders
-        this.jugador = new Personaje(this, 100, 400, this.sonidoSalto);
-        this.jugador.setScale(3); 
-        this.jugador.setCollideWorldBounds(true);    
+        this.jugador = new Personaje(this, 0, 1200, this.sonidoSalto);
+        this.jugador.setScale(4); 
         this.physics.add.collider(this.jugador, plataformas);
+        this.physics.add.collider(this.jugador, muerte, this.gameOver, null, this);        
+        this.jugador.setCollideWorldBounds(true);          
 
         //creamos el arma
         this.pistola = this.physics.add.staticSprite(300, 300, 'pistola');
@@ -74,12 +88,12 @@ export default class EscenaBase extends Phaser.Scene {
             this.jugador
         );
         //Creacion enemigo
-        this.enemigo = new Gusano(this, 700, 390, 'gusano_frame1', 620, 1030);
+        this.enemigo = new Enemigo(this, 500, 100);
         this.enemigo.setScale(5); 
         this.physics.add.collider(this.enemigo, plataformas);
         this.physics.add.overlap(this.jugador, this.enemigo, this.colisionEnemigo, null, this);
         //Camara que sigue al jugador
-        this.cameras.main.startFollow(this.jugador);
+        this.cameras.main.startFollow(this.jugador, true);
         //Creacion bala group
         this.balaGroup = new BalaGroup(this);
         this.addEvents();
@@ -90,29 +104,18 @@ export default class EscenaBase extends Phaser.Scene {
                 bala.setVisible(false);
                 bala.body.stop();
             }
-        )
-        // COLISION PLATAFORMAS
-        plataformas.setCollisionByExclusion([-1]);        
-        plataformas.forEachTile(tile => {
-            if (tile.index !== -1) {
-                tile.setSize(map.tileWidth * escalaVertical, map.tileHeight * escalaVertical);
-                tile.updatePixelXY();
-            }
-        });       
+        )     
         //marcador de puntos
         this.puntos = 0;
         this.txtMarcador = this.add.text(10, 20, 'Puntos: ' + this.puntos);
         this.txtMarcador.setFontSize(30);
         this.txtMarcador.setStyle({fontStyle: 'bold italic'});
         this.txtMarcador.setFill('#000');
-        this.txtMarcador.setScrollFactor(0);           
+        this.txtMarcador.setScrollFactor(0);        
     }
 
     update() {
-        this.jugador.update();  
-        if (this.enemigo && this.enemigo.active) {
-        this.enemigo.update();
-    }          
+        this.jugador.update();            
     }
 
     addEvents() {
@@ -122,8 +125,7 @@ export default class EscenaBase extends Phaser.Scene {
     }    
     
     gameOver() {
-        this.musica.stop();
-        this.scene.restart();
+        this.scene.restart();      
     }
 
     disparar() {
