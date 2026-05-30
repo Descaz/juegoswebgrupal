@@ -74,7 +74,7 @@ export default class EscenaBase extends Phaser.Scene {
         this.sonidoPowerUp = this.sound.add('powerup');
         //creamos al personaje del jugador y asignamos colliders
         this.jugador = new Personaje(this, 0, 1200, this.sonidoSalto);
-        this.jugador.setScale(3); 
+        this.jugador.setScale(4); 
         this.physics.add.collider(this.jugador, plataformas);
         this.physics.add.collider(this.jugador, muerte, this.gameOver, null, this);        
         this.jugador.setCollideWorldBounds(true);          
@@ -95,7 +95,7 @@ export default class EscenaBase extends Phaser.Scene {
         this.physics.add.collider(this.enemigo, plataformas);
         this.physics.add.overlap(this.jugador, this.enemigo, this.colisionEnemigo, null, this);
         //Camara que sigue al jugador
-        this.cameras.main.startFollow(this.jugador);
+        this.cameras.main.startFollow(this.jugador, true);
         //Creacion bala group
         this.balaGroup = new BalaGroup(this);
         this.addEvents();
@@ -127,8 +127,7 @@ export default class EscenaBase extends Phaser.Scene {
     }    
     
     gameOver() {
-        this.scene.restart();
-       
+        this.scene.restart();      
     }
 
     disparar() {

@@ -34,7 +34,7 @@ export class Bala extends Phaser.Physics.Arcade.Sprite {
 	
 	preUpdate(time, delta) {
 		super.preUpdate(time, delta);
-		if(this.x > 2000 || this.x < -2000) {
+		if(this.x > 20000 || this.x < -20000) {
 			this.setActive(false);
 			this.setVisible(false);
 						
