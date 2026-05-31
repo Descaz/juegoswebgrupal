@@ -88,20 +88,15 @@ export default class EscenaBase extends Phaser.Scene {
             this.pistolas.forEach(objeto => {
                 this.pistola = this.physics.add.staticSprite(objeto.x*4, objeto.y*4, 'pistola');
                 this.pistola.setScale(3);
-                this.physics.add.overlap(
-                    this.jugador,
-                    this.pistola,
-                    this.recogerArma,
-                    null,
-                    this.jugador
-                 );
+                this.physics.add.collider(this.pistola, this.jugador, this.recogerArma(objeto), null, this);   
+        
             });
         }
         else {
             console.log("No hay capa de pistolas");
         }
 
-        //creamos el arma
+        /*//creamos el arma
         if(map.getObjectLayer('powerups') != null) {
             this.powers = map.getObjectLayer('powerups').objects;
             this.powers.forEach(objeto => {
@@ -114,12 +109,12 @@ export default class EscenaBase extends Phaser.Scene {
                     this.jugador.recogerPowerUp,
                     null,
                     this.jugador
-                 );
+                );
             });
         }
         else {
             console.log("No hay capa de pistolas");
-        }
+        }*/
         
 
         //Creacion enemigo especial
@@ -204,7 +199,7 @@ export default class EscenaBase extends Phaser.Scene {
     }
 
     updateBalas(b) {
-        balas = balas + b; 
+        balas = balas - b; 
         this.txtBalas.setText('Balas: ' + balas);
     }
 
@@ -235,7 +230,7 @@ export default class EscenaBase extends Phaser.Scene {
     }
 
     disparar() {
-        if(balas >= 0) {
+        if(balas > 0) {
             const direccion = this.jugador.flipX ? -1 : 1;
             if (!this.jugador.tieneArma) return;
             this.balaGroup.dispararBala(this.jugador.x + 40, this.jugador.y, direccion, 0);
@@ -261,14 +256,14 @@ export default class EscenaBase extends Phaser.Scene {
         }
     }*/
 
-    recogerArma(objeto) {        
+    recogerArma(municion) {        
         balas = balas + 30;
-        this.jugador.recogerArma(this.jugador, objeto);
+        this.jugador.recogerArma(this.jugador,municion);
     }
 
-    recogerPowerUp(objeto) {
+    recogerPowerUp(powerup) {
         powerup = true;
-        this.jugador.recogerArma(this.jugador, objeto);
+        this.jugador.recogerArma(this.jugador, powerup);
         this.time.delayedCall(10000, () => { //timer duracion powerup
             powerup = false; 
         });
