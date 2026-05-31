@@ -4,9 +4,7 @@
  * 
  */
 
-import BalaGroup from './bala.js';
-import Bala from './bala.js';
-import EscenaBase from './escenaBase.js';
+
 
 export default class Personaje extends Phaser.Physics.Arcade.Sprite{
   constructor(escena, x, y, sonidoSalto) {
@@ -53,7 +51,7 @@ export default class Personaje extends Phaser.Physics.Arcade.Sprite{
   }
   
   update() {
-    const velocidad = 200;        
+    const velocidad = 400;        
     const velocidadSalto = -800;
     const animacion = this.tieneArma ? 'andar_pistola' : 'andar';   
     if (this.body.velocity.x > 0) {

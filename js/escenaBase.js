@@ -23,8 +23,8 @@ export default class EscenaBase extends Phaser.Scene {
         //carga de sprites jugador y objetos
         this.load.image('moneda', './resources/moneda.png');
         this.load.image('bala', './resources/assets/Tiles/tile_0044.png');
-        this.load.image('gusano_frame1', 'resources/assets/Tiles/tile_0055.png');
-        this.load.image('gusano_frame2', 'resources/assets/Tiles/tile_0056.png');
+        this.load.image('gusano_frame1', './resources/assets/Tiles/tile_0055.png');
+        this.load.image('gusano_frame2', './resources/assets/Tiles/tile_0056.png');
         this.load.image('pistola', './resources/assets/Tiles/tile_0050.png');        
         //carga de sonidos
         this.load.audio('saltar', './resources/SoundJump1.wav'); //salto
@@ -88,16 +88,40 @@ export default class EscenaBase extends Phaser.Scene {
             this.jugador
         );
         //Creacion enemigo
-        this.enemigo = new Enemigo(this, 500, 100);
-        this.enemigo.setScale(5); 
-        this.physics.add.collider(this.enemigo, plataformas);
-        this.physics.add.overlap(this.jugador, this.enemigo, this.colisionEnemigo, null, this);
+        //this.enemigo = new Enemigo(this, 500, 100);
+        //this.enemigo.setScale(5); 
+        //this.physics.add.collider(this.enemigo, plataformas);
+        //this.physics.add.overlap(this.jugador, this.enemigo, this.colisionEnemigo, null, this);
+        
+        //Creacion enemigo gusano
+        this.gusanos = this.physics.add.group({
+    allowGravity: false,
+    immovable: true
+});
+        
+        this.gusanos.add(new Gusano(this, 625, 390, 'gusano_frame1', 625, 1095));
+        this.gusanos.add(new Gusano(this, 1700, 450, 'gusano_frame1', 1700, 2050));
+        this.gusanos.add(new Gusano(this, 2730, 390, 'gusano_frame1', 2730, 3100));
+        this.gusanos.add(new Gusano(this, 3400, 450, 'gusano_frame1', 3400, 3580));
+        this.gusanos.add(new Gusano(this, 4450, 80, 'gusano_frame1', 4450, 4930));
+        this.gusanos.add(new Gusano(this, 6570, 760, 'gusano_frame1', 6570, 6960));
+        this.gusanos.add(new Gusano(this, 8300, 265, 'gusano_frame1', 8300, 8680));
+        this.gusanos.add(new Gusano(this, 9360, 205, 'gusano_frame1', 9360, 9700));
+        this.gusanos.add(new Gusano(this, 10030, 265, 'gusano_frame1', 10030, 10200));
+        this.gusanos.add(new Gusano(this, 10520, 265, 'gusano_frame1', 10520, 10700));
+        this.gusanos.add(new Gusano(this, 10880, 265, 'gusano_frame1', 10880, 11070));
+        this.gusanos.add(new Gusano(this, 12960, 265, 'gusano_frame1', 12960, 13340));
+        this.gusanos.add(new Gusano(this, 16510, 145, 'gusano_frame1', 16160, 16510));
+        this.gusanos.add(new Gusano(this, 16200, 390, 'gusano_frame1', 16200, 16530));
+        this.physics.add.overlap(this.jugador, this.gusanos, this.colisionEnemigo, null, this);
+        
         //Camara que sigue al jugador
         this.cameras.main.startFollow(this.jugador, true);
         //Creacion bala group
         this.balaGroup = new BalaGroup(this);
         this.addEvents();
-        this.physics.add.collider(this.balaGroup, this.enemigo, this.colisionEnemigoBala, null, this);
+        //this.physics.add.collider(this.balaGroup, this.enemigo, this.colisionEnemigoBala, null, this);
+        this.physics.add.overlap(this.balaGroup, this.gusanos, this.colisionEnemigoBala, null, this);
         this.physics.add.collider(this.balaGroup, plataformas,
             (bala) => {
                 bala.setActive(false);
@@ -111,11 +135,25 @@ export default class EscenaBase extends Phaser.Scene {
         this.txtMarcador.setFontSize(30);
         this.txtMarcador.setStyle({fontStyle: 'bold italic'});
         this.txtMarcador.setFill('#000');
-        this.txtMarcador.setScrollFactor(0);        
+        this.txtMarcador.setScrollFactor(0);     
+        //Debug coordenadas   
+        this.debugText = this.add.text(1000, 10, '', { fill: '#000000', fontSize: '24px' });
+        this.debugText.setScrollFactor(0);
     }
 
     update() {
-        this.jugador.update();            
+        this.jugador.update();   
+        
+        this.gusanos.getChildren().forEach(gusano => {
+            if (gusano.active) gusano.update();
+});
+      //Debug actualizar coordenadas   
+        this.debugText.setText
+        (
+        'X: ' + Math.floor(this.input.activePointer.worldX) +
+        'Y: ' + Math.floor(this.input.activePointer.worldY)
+        );
+        
     }
 
     addEvents() {
@@ -148,7 +186,8 @@ export default class EscenaBase extends Phaser.Scene {
     }
 
     colisionEnemigoBala(balaGroup, enemigo) {
-        this.enemigo.destroy();
+        //this.enemigo.destroy();
+        enemigo.destroy();
         this.sonidoKill.play();    
         this.puntos = this.puntos + 25;     
     }
