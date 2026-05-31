@@ -63,7 +63,7 @@ export default class Personaje extends Phaser.Physics.Arcade.Sprite{
   
   update() {
     const velocidad = 200;        
-    const velocidadSalto = -800;
+    const velocidadSalto = -550;
     const animacion = this.tieneArma ? 'andar_pistola' : 'andar';   
     if (this.body.velocity.x > 0) {
       this.setFlipX(false)

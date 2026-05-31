@@ -15,8 +15,8 @@ export class Start extends Phaser.Scene {
         const width = this.scale.width;
         const height = this.scale.height;
 
-        this.background = this.add.tileSprite(width, height + 130, width, height, 'fondo');
-        this.background.setScale(4.5);
+        this.background = this.add.tileSprite(width, height + 270, width, height, 'fondo');
+        this.background.setScale(3);
 
         this.add.text(width / 2, height * 0.25, 'Bunny Bad', {
             fontSize: '150px',
