@@ -82,7 +82,7 @@ export default class EscenaBase extends Phaser.Scene {
         this.physics.add.collider(this.jugador, muerte, this.gameOver, null, this);        
         this.jugador.setCollideWorldBounds(true);          
 
-        //creamos pistolass
+        //creamos pistolas
         if(map.getObjectLayer('municion') != null) {
             this.pistolas = map.getObjectLayer('municion').objects;
             this.pistolas.forEach(objeto => {
@@ -234,9 +234,9 @@ export default class EscenaBase extends Phaser.Scene {
     dispararPowerUp() {
         const direccion = this.jugador.flipX ? -1 : 1;
         if (!this.jugador.tieneArma) return;
-        this.balaGroup.dispararBala(this.jugador.x+40, this.jugador.y, direccion, 0);
-        this.balaGroup.dispararBala(this.jugador.x+40, this.jugador.y, direccion, 1);
-        this.balaGroup.dispararBala(this.jugador.x+40, this.jugador.y, direccion, 2);
+        this.balaGroup.dispararBala(this.jugador.x + 40, this.jugador.y, direccion, 0);
+        this.balaGroup.dispararBala(this.jugador.x + 40, this.jugador.y, direccion, 1);
+        this.balaGroup.dispararBala(this.jugador.x + 40, this.jugador.y, direccion, 2);
         this.sonidoDisparo.play();
     }
     
