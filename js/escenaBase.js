@@ -82,40 +82,31 @@ export default class EscenaBase extends Phaser.Scene {
         this.physics.add.collider(this.jugador, muerte, this.gameOver, null, this);        
         this.jugador.setCollideWorldBounds(true);          
 
-        //creamos el arma
+        //creamos pistolass
         if(map.getObjectLayer('municion') != null) {
             this.pistolas = map.getObjectLayer('municion').objects;
             this.pistolas.forEach(objeto => {
                 this.pistola = this.physics.add.staticSprite(objeto.x*4, objeto.y*4, 'pistola');
                 this.pistola.setScale(3);
-                this.physics.add.collider(this.pistola, this.jugador, this.recogerArma, null, this);
-        
+                this.physics.add.collider(this.pistola, this.jugador, this.recogerArma, null, this);        
             });
         }
         else {
             console.log("No hay capa de pistolas");
         }
 
-        /*//creamos el arma
+        //creamos powerups
         if(map.getObjectLayer('powerups') != null) {
-            this.powers = map.getObjectLayer('powerups').objects;
-            this.powers.forEach(objeto => {
+            this.power = map.getObjectLayer('powerups').objects;
+            this.power.forEach(objeto => {
                 this.powerup = this.physics.add.staticSprite(objeto.x*4, objeto.y*4, 'pistola');
                 this.powerup.setScale(3);
-                this.powerup.setTint(0x00FFFF);
-                this.physics.add.overlap(
-                    this.jugador,
-                    this.powerup,
-                    this.jugador.recogerPowerUp,
-                    null,
-                    this.jugador
-                );
+                this.physics.add.collider(this.powerup, this.jugador, this.recogerPowerUp, null, this);        
             });
         }
         else {
             console.log("No hay capa de pistolas");
-        }*/
-        
+        }        
 
         //Creacion enemigo especial
         this.enemigof = new Enemigo(this, 5000, 100);
@@ -138,6 +129,7 @@ export default class EscenaBase extends Phaser.Scene {
             }
         )
         
+        //crear gusanos
         if(map.getObjectLayer('enemigos') != null) {
             this.objetos = map.getObjectLayer('enemigos').objects;
             this.objetos.forEach(objeto => {
@@ -261,9 +253,9 @@ export default class EscenaBase extends Phaser.Scene {
         this.jugador.recogerArma(this.jugador,municion);
     }
 
-    recogerPowerUp(powerup) {
+    recogerPowerUp(pow) {
         powerup = true;
-        this.jugador.recogerArma(this.jugador, powerup);
+        this.jugador.recogerArma(this.jugador, pow);
         this.time.delayedCall(10000, () => { //timer duracion powerup
             powerup = false; 
         });
