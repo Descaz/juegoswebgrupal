@@ -175,8 +175,7 @@ export default class EscenaBase extends Phaser.Scene {
     update() {
         this.jugador.update();   
         if(vida <= 0) {
-            this.gameOver();
-            vida = 3;
+            this.gameOver();            
         }    
     }
 
@@ -209,12 +208,8 @@ export default class EscenaBase extends Phaser.Scene {
     gameOver() {
         vida = 3;
         puntos = 0;
-        this.registry.destroy();
-        this.events.off();
-        this.scene.restart();
-        /*this.time.delayedCall(3000, function() {
-    this.scene.restart();
-  }, [], this);  */  
+        this.invulnerable = false;
+        this.scene.restart();        
     }
 
     enemigoMuerto(enemigo) {
@@ -265,8 +260,7 @@ export default class EscenaBase extends Phaser.Scene {
         if (this.invulnerable) return;
         this.invulnerable = true;
         this.jugador.setTint(0xff0000);
-        this.sonidoDmg.play();         
-                
+        this.sonidoDmg.play();                
         this.time.delayedCall(1000, () => {
             this.invulnerable = false;
             this.jugador.clearTint();      
