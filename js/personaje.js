@@ -92,8 +92,7 @@ export default class Personaje extends Phaser.Physics.Arcade.Sprite{
     }  
     if(Phaser.Input.Keyboard.JustDown(this.keys.jump) && this.body.onFloor()) {
       this.setVelocityY(velocidadSalto); 
-      //this.play(animacion, false);
-      this.play('spr_saltando', true);
+      this.play('spr_saltando1', true);
       this.sonidoSalto.play();    
     } 
     if(Phaser.Input.Keyboard.JustUp(this.keys.jump) && this.body.velocity.y < 0) {

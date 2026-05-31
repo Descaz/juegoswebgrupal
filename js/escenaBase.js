@@ -64,9 +64,8 @@ export default class EscenaBase extends Phaser.Scene {
         tile.updatePixelXY();
             }
         });
-        muerte.setCollisionByExclusion([-1]);        
+        muerte.setCollisionByExclusion([-1]);         
         
-
         //sonidos
         this.sonidoSalto = this.sound.add('saltar');
         this.sonidoDmg = this.sound.add('dmg');
@@ -98,11 +97,10 @@ export default class EscenaBase extends Phaser.Scene {
         this.physics.add.overlap(this.pistola2, this.jugador, this.recogerPowerUp, null, this);
         
 
-        //Creacion enemigo
-        this.enemigo = new Enemigo(this, 500, 100);
-        this.enemigo.setScale(5); 
-        this.physics.add.collider(this.enemigo, plataformas);
-        this.physics.add.overlap(this.jugador, this.enemigo, this.colisionEnemigo, null, this);
+        //Creacion enemigos
+        
+        
+
 
         this.enemigof = new Enemigo(this, 5000, 100);
         this.enemigof.setScale(20); 
@@ -114,8 +112,7 @@ export default class EscenaBase extends Phaser.Scene {
         this.cameras.main.startFollow(this.jugador, true);
         //Creacion bala group
         this.balaGroup = new BalaGroup(this);
-        this.addEvents();
-        this.physics.add.collider(this.balaGroup, this.enemigo, this.colisionEnemigoBala, null, this);
+        this.addEvents();       
         this.physics.add.collider(this.balaGroup, this.enemigof, this.colisionEnemigoBalaBoss, null, this);
         this.physics.add.collider(this.balaGroup, plataformas,
             (bala) => {
@@ -124,7 +121,25 @@ export default class EscenaBase extends Phaser.Scene {
                 bala.body.stop();
             }
         )
-        //marcador de puntos
+        
+        if(map.getObjectLayer('enemigos') != null) {
+            this.objetos = map.getObjectLayer('enemigos').objects;
+            this.objetos.forEach(objeto => {
+                this.enemigo = new Enemigo(this, objeto.x*4, objeto.y*4).setScale(4);
+                this.physics.add.collider(this.enemigo, plataformas);
+                this.physics.add.collider(this.balaGroup, this.enemigo,
+                    (objeto) => {
+                        objeto.destroy();
+                        this.sonidoKill.play(); 
+                        this.updatePuntos(25);  
+                    }                
+                )
+                this.physics.add.collider(this.enemigo, this.jugador, this.colisionEnemigo, null, this);                
+            });
+        }
+        else {
+            console.log("No hay capa de objetos enemigo");
+        }
         
         this.txtMarcador = this.add.text(10, 20, 'Puntos: ' + puntos);
         this.txtMarcador.setFontSize(30);
@@ -222,12 +237,6 @@ export default class EscenaBase extends Phaser.Scene {
         });
         this.updateVida(1);
         this.updatePuntos(-25);             
-    }
-
-    colisionEnemigoBala(balaGroup, enemigo) {     
-        this.enemigo.destroy();
-        this.sonidoKill.play(); 
-        this.updatePuntos(25);        
     }  
     
     colisionEnemigoBalaBoss(balaGroup, enemigo2) {     
