@@ -9,6 +9,17 @@ export default class Enemigo extends Phaser.Physics.Arcade.Sprite {
     const velocidadX = Phaser.Math.Between(-150, 150);
     const velocidadY = Phaser.Math.Between(-150, 150);
     this.setVelocity(velocidadX, velocidadY);
+
+    this.scene.anims.create({
+            key: 'gusano_anim',
+            frames: [
+                {key: 'gusano_frame1'},
+                {key: 'gusano_frame2'}
+            ],
+            frameRate: 4,
+            repeat: -1
+        });
+        this.play('gusano_anim')
   }
    
   update() {
