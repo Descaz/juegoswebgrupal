@@ -14,7 +14,7 @@ export default class BalaGroup extends Phaser.Physics.Arcade.Group {
     dispararBala(x, y, direccion, p){
         const bala = this.getFirstDead(false);
 		if (bala && p == 0) {
-			bala.disparar(x, y, direccion);
+			bala.disparar(x, y, direccion);			  
 		}
 		else if(bala &&  p == 1) {
 			bala.disparar2(x, y, direccion);
@@ -24,7 +24,7 @@ export default class BalaGroup extends Phaser.Physics.Arcade.Group {
 		}
 		else {
 			
-		}
+		}			   		
     }
 }
 
@@ -37,7 +37,7 @@ export class Bala extends Phaser.Physics.Arcade.Sprite {
         this.body.reset(x, y);
         this.setActive(true);
         this.setVisible(true);
-        this.setVelocityX(800 * direccion);   
+        this.setVelocityX(1600 * direccion);   
 		this.setScale(2);		
 	}
 
@@ -46,14 +46,14 @@ export class Bala extends Phaser.Physics.Arcade.Sprite {
         this.setActive(true);
         this.setVisible(true);
         this.setVelocityX(800 * direccion);   
-		this.setVelocityY(400 * direccion); 
+		this.setVelocityY(800 * direccion); 
 		this.setScale(2);		
 	}
 	disparar3(x, y, direccion) {
         this.body.reset(x, y);
         this.setActive(true);
         this.setVisible(true);
-        this.setVelocityX(400 * direccion);   
+        this.setVelocityX(800 * direccion);   
 		this.setVelocityY(800 *-direccion); 
 		this.setScale(2);		
 	}

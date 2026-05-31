@@ -3,7 +3,7 @@ import Enemigo from './enemigo.js';
 import BalaGroup from './bala.js';
 import Bala from './bala.js';
 import Gusano from './Gusano.js';
-
+var powerup = false;
 
 /**
  * Clase que regula la escena principal del juego.
@@ -87,6 +87,12 @@ export default class EscenaBase extends Phaser.Scene {
             null,
             this.jugador
         );
+
+        //powerups
+        this.pistola2 = this.physics.add.staticSprite(600, 300, 'pistola');
+        this.pistola2.setScale(3);
+        this.physics.add.overlap(this.pistola2, this.jugador, this.recogerPowerUp, null, this);
+
         //Creacion enemigo
         this.enemigo = new Enemigo(this, 500, 100);
         this.enemigo.setScale(5); 
@@ -98,13 +104,13 @@ export default class EscenaBase extends Phaser.Scene {
         this.balaGroup = new BalaGroup(this);
         this.addEvents();
         this.physics.add.collider(this.balaGroup, this.enemigo, this.colisionEnemigoBala, null, this);
-        this.physics.add.collider(this.balaGroup, plataformas,
+        /*this.physics.add.collider(this.balaGroup, plataformas,
             (bala) => {
                 bala.setActive(false);
                 bala.setVisible(false);
                 bala.body.stop();
             }
-        )     
+        )*/ 
         //marcador de puntos
         this.puntos = 0;
         this.txtMarcador = this.add.text(10, 20, 'Puntos: ' + this.puntos);
@@ -120,7 +126,12 @@ export default class EscenaBase extends Phaser.Scene {
 
     addEvents() {
         this.input.on('pointerdown', pointer=> {
-            this.disparar();
+            if(powerup) {
+                this.dispararPowerUp();
+            }
+            else {
+                this.disparar();
+            }
         });
     }    
     
@@ -131,22 +142,31 @@ export default class EscenaBase extends Phaser.Scene {
     disparar() {
         const direccion = this.jugador.flipX ? -1 : 1;
         if (!this.jugador.tieneArma) return;
-        this.balaGroup.dispararBala(this.jugador.x+20, this.jugador.y, direccion, 0);
-        this.balaGroup.dispararBala(this.jugador.x+20, this.jugador.y, direccion, 1);
-        this.balaGroup.dispararBala(this.jugador.x+20, this.jugador.y, direccion, 2);
-        this.balaGroup.dispararBala(this.enemigo.x+20, this.enemigo.y, direccion, 0);
-
+        this.balaGroup.dispararBala(this.jugador.x+40, this.jugador.y, direccion, 0);
         this.sonidoDisparo.play();
     }
 
     dispararPowerUp() {
-        this.balaGroup.dispararBala(this.jugador.x+20, this.jugador.y, direccion);
+        const direccion = this.jugador.flipX ? -1 : 1;
+        if (!this.jugador.tieneArma) return;
+        this.balaGroup.dispararBala(this.jugador.x+40, this.jugador.y, direccion, 0);
+        this.balaGroup.dispararBala(this.jugador.x+40, this.jugador.y, direccion, 1);
+        this.balaGroup.dispararBala(this.jugador.x+40, this.jugador.y, direccion, 2);
         this.sonidoDisparo.play();
     }
     
+    aiEnemigo() {
+        this.balaGroup.dispararBala(this.enemigo.x+40, this.enemigo.y, direccion, 0);
+    }
+
     recogerPowerUp() {
         powerup = true;
+        this.jugador.recogerArma(this.jugador, this.pistola2);
+        this.time.delayedCall(10000, () => { //timer duracion powerup
+            powerup = false; 
+        });
     }
+    
     colisionEnemigo(jugador, enemigo) {
         if (this.invulnerable) return;
         this.invulnerable = true;
