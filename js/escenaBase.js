@@ -6,6 +6,7 @@ import Gusano from './Gusano.js';
 var powerup = false;
 var puntos = 0;
 var vida = 3;
+var balas = 0;
 
 
 /**
@@ -25,6 +26,7 @@ export default class EscenaBase extends Phaser.Scene {
         this.load.image('tileset', './resources/assets/tilesets/tilemap.png');
         //carga de sprites jugador y objetos
         this.load.image('moneda', './resources/moneda.png');
+        this.load.image('personaje', './resources/spr_andando2.png');
         this.load.image('bala', './resources/assets/Tiles/tile_0044.png');
         this.load.image('gusano_frame1', 'resources/assets/Tiles/tile_0055.png');
         this.load.image('gusano_frame2', 'resources/assets/Tiles/tile_0056.png');
@@ -36,7 +38,7 @@ export default class EscenaBase extends Phaser.Scene {
         this.load.audio('disparo', './resources/SoundShootRegular.wav'); //disparo
         this.load.audio('powerup', './resources/SoundBonus.wav'); //powerup
         //carga de sprites de animacion
-        this.load.atlas('spr_player', './resources/spr_player.png', './resources/spr_player_atlas.json');
+        this.load.atlas('spr_player', './resources/spr_player.png', './resources/spr_player_atlas.json');       
     }   
 
     create() {   
@@ -56,12 +58,13 @@ export default class EscenaBase extends Phaser.Scene {
         const altoEscalado = map.heightInPixels * escalaVertical;              
         this.cameras.main.setBounds(0, 0, anchoEscalado, altoEscalado);
         this.physics.world.setBounds(0, 0, anchoEscalado, altoEscalado);
+
         // COLISION PLATAFORMAS
         plataformas.setCollisionByExclusion([-1]);        
         plataformas.forEachTile(tile => {
             if (tile.index !== -1) {
                 tile.setSize(16, 4); 
-        tile.updatePixelXY();
+                tile.updatePixelXY();
             }
         });
         muerte.setCollisionByExclusion([-1]);         
@@ -73,35 +76,53 @@ export default class EscenaBase extends Phaser.Scene {
         this.sonidoDisparo = this.sound.add('disparo');
         this.sonidoPowerUp = this.sound.add('powerup');
         //creamos al personaje del jugador y asignamos colliders
-        this.jugador = new Personaje(this, 0, 1200, this.sonidoSalto);
+        this.jugador = new Personaje(this, 40, 820, this.sonidoSalto);
         this.jugador.setScale(4); 
-        this.physics.add.collider(this.jugador, plataformas);
+        this.physics.add.collider(this.jugador, plataformas);       
         this.physics.add.collider(this.jugador, muerte, this.gameOver, null, this);        
         this.jugador.setCollideWorldBounds(true);          
 
         //creamos el arma
-        this.pistola = this.physics.add.staticSprite(300, 300, 'pistola');
-        this.pistola.setScale(3);
-        this.physics.add.overlap(
-            this.jugador,
-            this.pistola,
-            this.jugador.recogerArma,
-            null,
-            this.jugador
-        );
+        if(map.getObjectLayer('municion') != null) {
+            this.pistolas = map.getObjectLayer('municion').objects;
+            this.pistolas.forEach(objeto => {
+                this.pistola = this.physics.add.staticSprite(objeto.x*4, objeto.y*4, 'pistola');
+                this.pistola.setScale(3);
+                this.physics.add.overlap(
+                    this.jugador,
+                    this.pistola,
+                    this.recogerArma,
+                    null,
+                    this.jugador
+                 );
+            });
+        }
+        else {
+            console.log("No hay capa de pistolas");
+        }
 
-        //powerups
-        this.pistola2 = this.physics.add.staticSprite(600, 300, 'pistola');
-        this.pistola2.setScale(3);
-        this.pistola2.setTint(0x00FFFF);
-        this.physics.add.overlap(this.pistola2, this.jugador, this.recogerPowerUp, null, this);
+        //creamos el arma
+        if(map.getObjectLayer('powerups') != null) {
+            this.powers = map.getObjectLayer('powerups').objects;
+            this.powers.forEach(objeto => {
+                this.powerup = this.physics.add.staticSprite(objeto.x*4, objeto.y*4, 'pistola');
+                this.powerup.setScale(3);
+                this.powerup.setTint(0x00FFFF);
+                this.physics.add.overlap(
+                    this.jugador,
+                    this.powerup,
+                    this.jugador.recogerPowerUp,
+                    null,
+                    this.jugador
+                 );
+            });
+        }
+        else {
+            console.log("No hay capa de pistolas");
+        }
         
 
-        //Creacion enemigos
-        
-        
-
-
+        //Creacion enemigo especial
         this.enemigof = new Enemigo(this, 5000, 100);
         this.enemigof.setScale(20); 
         this.enemigof.setTint(0x00FFFF);
@@ -131,10 +152,12 @@ export default class EscenaBase extends Phaser.Scene {
                     (objeto) => {
                         objeto.destroy();
                         this.sonidoKill.play(); 
-                        this.updatePuntos(25);  
+                        this.updatePuntos(25);                        
                     }                
                 )
-                this.physics.add.collider(this.enemigo, this.jugador, this.colisionEnemigo, null, this);                
+                this.physics.add.collider(this.enemigo, this.jugador, this.colisionEnemigo, null, this);  
+                this.physics.add.collider(this.enemigo, muerte, this.enemigoMuerto, null, this);   
+                //this.aiEnemigo();              
             });
         }
         else {
@@ -147,13 +170,19 @@ export default class EscenaBase extends Phaser.Scene {
         this.txtMarcador.setFill('#000');
         this.txtMarcador.setScrollFactor(0);   
         
-        //marcador de vida
-  
-        this.txtVida = this.add.text(10, 40, 'Vida: ' + vida);
+        //marcador de vida 
+        this.txtVida = this.add.text(10, 50, 'Vida: ' + vida);
         this.txtVida.setFontSize(30);
         this.txtVida.setStyle({fontStyle: 'bold italic'});
         this.txtVida.setFill('#000');
         this.txtVida.setScrollFactor(0);   
+
+        //marcador de balas 
+        this.txtBalas = this.add.text(10, 80, 'Balas: ' + balas);
+        this.txtBalas.setFontSize(30);
+        this.txtBalas.setStyle({fontStyle: 'bold italic'});
+        this.txtBalas.setFill('#000');
+        this.txtBalas.setScrollFactor(0);
     }
 
     update() {
@@ -172,6 +201,11 @@ export default class EscenaBase extends Phaser.Scene {
     updateVida(v) {
         vida = vida - v; 
         this.txtVida.setText('Vida: ' + vida);
+    }
+
+    updateBalas(b) {
+        balas = balas + b; 
+        this.txtBalas.setText('Balas: ' + balas);
     }
 
     addEvents() {
@@ -196,11 +230,18 @@ export default class EscenaBase extends Phaser.Scene {
   }, [], this);  */  
     }
 
+    enemigoMuerto(enemigo) {
+        enemigo.destroy();
+    }
+
     disparar() {
-        const direccion = this.jugador.flipX ? -1 : 1;
-        if (!this.jugador.tieneArma) return;
-        this.balaGroup.dispararBala(this.jugador.x+40, this.jugador.y, direccion, 0);
-        this.sonidoDisparo.play();
+        if(balas >= 0) {
+            const direccion = this.jugador.flipX ? -1 : 1;
+            if (!this.jugador.tieneArma) return;
+            this.balaGroup.dispararBala(this.jugador.x + 40, this.jugador.y, direccion, 0);
+            this.updateBalas(1);
+            this.sonidoDisparo.play();
+        }
     }
 
     dispararPowerUp() {
@@ -212,13 +253,22 @@ export default class EscenaBase extends Phaser.Scene {
         this.sonidoDisparo.play();
     }
     
-    aiEnemigo() {
-        this.balaGroup.dispararBala(this.enemigo.x+40, this.enemigo.y, direccion, 0);
+    /*aiEnemigo(enem) {
+        while(enem != null) {
+            this.time.delayedCall(3000, () => { //timer duracion powerup
+                this.balaGroup.dispararBala(enem.x + 40, enem.y, direccion, 0);
+            });
+        }
+    }*/
+
+    recogerArma(objeto) {        
+        balas = balas + 30;
+        this.jugador.recogerArma(this.jugador, objeto);
     }
 
-    recogerPowerUp() {
+    recogerPowerUp(objeto) {
         powerup = true;
-        this.jugador.recogerArma(this.jugador, this.pistola2);
+        this.jugador.recogerArma(this.jugador, objeto);
         this.time.delayedCall(10000, () => { //timer duracion powerup
             powerup = false; 
         });

@@ -10,7 +10,7 @@ import EscenaBase from './escenaBase.js';
 
 export default class Personaje extends Phaser.Physics.Arcade.Sprite{
   constructor(escena, x, y, sonidoSalto) {
-    super(escena, x, y, 'jugador');
+    super(escena, x, y, 'personaje');
     this.escena = escena;
     this.escena.add.existing(this);
     this.escena.physics.add.existing(this);
