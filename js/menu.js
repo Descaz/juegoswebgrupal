@@ -18,7 +18,7 @@ export class Start extends Phaser.Scene {
         this.background = this.add.tileSprite(width, height + 130, width, height, 'fondo');
         this.background.setScale(4.5);
 
-        this.add.text(width / 2, height * 0.25, 'EL CONEJO MALO', {
+        this.add.text(width / 2, height * 0.25, 'Bunny Bad', {
             fontSize: '150px',
             fontFamily: 'Times New Roman',
             color: '#A64E0D',
@@ -26,7 +26,7 @@ export class Start extends Phaser.Scene {
             strokeThickness: 6
         }).setOrigin(0.5);
 
-        this.add.text(width / 2 + 3, height * 0.25 + 3, 'EL CONEJO MALO', {
+        this.add.text(width / 2 + 3, height * 0.25 + 3, 'Bunny Bad', {
             fontSize: '150px',
             fontFamily: 'Times New Roman',
             color: '#571208',
