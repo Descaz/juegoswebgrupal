@@ -43,7 +43,16 @@ export default class Personaje extends Phaser.Physics.Arcade.Sprite{
       ],
       frameRate: 6,
       repeat: -1
-    });    
+    });  
+
+    this.escena.anims.create({
+      key: 'saltando',
+      frames: [
+        {key: 'spr_player', frame: 'spr_saltando1'}        
+      ],
+      frameRate: 6,
+      repeat: -1
+    }); 
   }
 
   recogerArma(jugador, pistola) {
@@ -82,7 +91,9 @@ export default class Personaje extends Phaser.Physics.Arcade.Sprite{
       }
     }  
     if(Phaser.Input.Keyboard.JustDown(this.keys.jump) && this.body.onFloor()) {
-      this.setVelocityY(velocidadSalto);  
+      this.setVelocityY(velocidadSalto); 
+      //this.play(animacion, false);
+      this.play('spr_saltando', true);
       this.sonidoSalto.play();    
     } 
     if(Phaser.Input.Keyboard.JustUp(this.keys.jump) && this.body.velocity.y < 0) {

@@ -4,6 +4,9 @@ import BalaGroup from './bala.js';
 import Bala from './bala.js';
 import Gusano from './Gusano.js';
 var powerup = false;
+var puntos = 0;
+var vida = 3;
+
 
 /**
  * Clase que regula la escena principal del juego.
@@ -91,37 +94,69 @@ export default class EscenaBase extends Phaser.Scene {
         //powerups
         this.pistola2 = this.physics.add.staticSprite(600, 300, 'pistola');
         this.pistola2.setScale(3);
+        this.pistola2.setTint(0x00FFFF);
         this.physics.add.overlap(this.pistola2, this.jugador, this.recogerPowerUp, null, this);
+        
 
         //Creacion enemigo
         this.enemigo = new Enemigo(this, 500, 100);
         this.enemigo.setScale(5); 
         this.physics.add.collider(this.enemigo, plataformas);
         this.physics.add.overlap(this.jugador, this.enemigo, this.colisionEnemigo, null, this);
+
+        this.enemigof = new Enemigo(this, 5000, 100);
+        this.enemigof.setScale(20); 
+        this.enemigof.setTint(0x00FFFF);
+        this.physics.add.collider(this.enemigof, plataformas);
+        this.physics.add.overlap(this.jugador, this.enemigof, this.colisionEnemigo, null, this);
+
         //Camara que sigue al jugador
         this.cameras.main.startFollow(this.jugador, true);
         //Creacion bala group
         this.balaGroup = new BalaGroup(this);
         this.addEvents();
         this.physics.add.collider(this.balaGroup, this.enemigo, this.colisionEnemigoBala, null, this);
-        /*this.physics.add.collider(this.balaGroup, plataformas,
+        this.physics.add.collider(this.balaGroup, this.enemigof, this.colisionEnemigoBalaBoss, null, this);
+        this.physics.add.collider(this.balaGroup, plataformas,
             (bala) => {
                 bala.setActive(false);
                 bala.setVisible(false);
                 bala.body.stop();
             }
-        )*/ 
+        )
         //marcador de puntos
-        this.puntos = 0;
-        this.txtMarcador = this.add.text(10, 20, 'Puntos: ' + this.puntos);
+        
+        this.txtMarcador = this.add.text(10, 20, 'Puntos: ' + puntos);
         this.txtMarcador.setFontSize(30);
         this.txtMarcador.setStyle({fontStyle: 'bold italic'});
         this.txtMarcador.setFill('#000');
-        this.txtMarcador.setScrollFactor(0);        
+        this.txtMarcador.setScrollFactor(0);   
+        
+        //marcador de vida
+  
+        this.txtVida = this.add.text(10, 40, 'Vida: ' + vida);
+        this.txtVida.setFontSize(30);
+        this.txtVida.setStyle({fontStyle: 'bold italic'});
+        this.txtVida.setFill('#000');
+        this.txtVida.setScrollFactor(0);   
     }
 
     update() {
-        this.jugador.update();            
+        this.jugador.update();   
+        if(vida <= 0) {
+            this.gameOver();
+            vida = 3;
+        }    
+    }
+
+    updatePuntos(p) {
+        puntos = puntos + p; 
+        this.txtMarcador.setText('Puntos: ' + puntos);
+    }
+    
+    updateVida(v) {
+        vida = vida - v; 
+        this.txtVida.setText('Vida: ' + vida);
     }
 
     addEvents() {
@@ -136,7 +171,14 @@ export default class EscenaBase extends Phaser.Scene {
     }    
     
     gameOver() {
-        this.scene.restart();      
+        vida = 3;
+        puntos = 0;
+        this.registry.destroy();
+        this.events.off();
+        this.scene.restart();
+        /*this.time.delayedCall(3000, function() {
+    this.scene.restart();
+  }, [], this);  */  
     }
 
     disparar() {
@@ -166,22 +208,31 @@ export default class EscenaBase extends Phaser.Scene {
             powerup = false; 
         });
     }
-    
+
     colisionEnemigo(jugador, enemigo) {
         if (this.invulnerable) return;
         this.invulnerable = true;
         this.jugador.setTint(0xff0000);
-        this.sonidoDmg.play();
-        this.puntos = this.puntos - 25;
+        this.sonidoDmg.play();         
+                
         this.time.delayedCall(1000, () => {
             this.invulnerable = false;
-            this.jugador.clearTint(); 
-        });    
+            this.jugador.clearTint();      
+            
+        });
+        this.updateVida(1);
+        this.updatePuntos(-25);             
     }
 
-    colisionEnemigoBala(balaGroup, enemigo) {
+    colisionEnemigoBala(balaGroup, enemigo) {     
         this.enemigo.destroy();
+        this.sonidoKill.play(); 
+        this.updatePuntos(25);        
+    }  
+    
+    colisionEnemigoBalaBoss(balaGroup, enemigo2) {     
+        this.enemigof.destroy();
         this.sonidoKill.play();    
-        this.puntos = this.puntos + 25;     
-    }
+        this.updatePuntos(100);  
+    } 
 }
