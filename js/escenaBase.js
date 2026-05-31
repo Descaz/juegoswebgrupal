@@ -88,7 +88,7 @@ export default class EscenaBase extends Phaser.Scene {
             this.pistolas.forEach(objeto => {
                 this.pistola = this.physics.add.staticSprite(objeto.x*4, objeto.y*4, 'pistola');
                 this.pistola.setScale(3);
-                this.physics.add.collider(this.pistola, this.jugador, this.recogerArma(objeto), null, this);   
+                this.physics.add.collider(this.pistola, this.jugador, this.recogerArma, null, this);
         
             });
         }
@@ -257,7 +257,7 @@ export default class EscenaBase extends Phaser.Scene {
     }*/
 
     recogerArma(municion) {        
-        balas = balas + 30;
+        this.updateBalas(-30);
         this.jugador.recogerArma(this.jugador,municion);
     }
 
