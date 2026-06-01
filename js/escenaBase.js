@@ -164,7 +164,7 @@ export default class EscenaBase extends Phaser.Scene {
         this.enemigof = this.gusanos.getChildren()[26];
         this.enemigof.setScale(10);
         this.enemigof.setTint(0x00FFFF);
-        this.enemigof.velocidad = 500;
+        this.enemigof.velocidad = 800;
         this.physics.add.collider(this.enemigof, this.BalaGroup, this.colisionEnemigoBalaBoss, null, this);
 
         this.physics.add.overlap(this.gusanos, this.barrerasGroup, 
@@ -420,7 +420,7 @@ export default class EscenaBase extends Phaser.Scene {
         this.invulnerable = true;
         this.jugador.setTint(0xff0000);
         this.sonidoDmg.play();                
-        this.time.delayedCall(1000000, () => {
+        this.time.delayedCall(1000, () => {
             this.invulnerable = false;
             this.jugador.clearTint();      
             
@@ -433,7 +433,7 @@ export default class EscenaBase extends Phaser.Scene {
         if(vidaBoss <= 0) {
             this.txtVidaBoss.visible = false;
             this.enemigoMuerto(enem);
-            this.updatePuntos(1000);  
+            this.updatePuntos(5000);  
         }
         else {
             if(!this.txtVidaBoss.visible) {

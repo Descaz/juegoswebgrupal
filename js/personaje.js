@@ -13,8 +13,8 @@ export default class Personaje extends Phaser.Physics.Arcade.Sprite{
     this.body.setSize(12, 14);
     this.body.setOffset(3, 2);
 
-    this.velocidad = 1500;
-    this.velocidadSalto = -625;
+    this.velocidad = 350;
+    this.velocidadSalto = -615;
     this.velocidadDash = 3000;
 
     this.dashing = false;
