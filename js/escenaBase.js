@@ -124,7 +124,6 @@ export default class EscenaBase extends Phaser.Scene {
         //Creacion bala group
         this.balaGroup = new BalaGroup(this);
         this.addEvents();       
-        //this.physics.add.collider(this.balaGroup, this.enemigof, this.colisionEnemigoBalaBoss, null, this);
         this.physics.add.collider(this.balaGroup, plataformas,
             (bala) => {
                 bala.setActive(false);
