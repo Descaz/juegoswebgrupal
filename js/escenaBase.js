@@ -116,15 +116,8 @@ export default class EscenaBase extends Phaser.Scene {
             });
         }
         else {
-            console.log("No hay capa de pistolas");
-        }        
-
-        //Creacion enemigo especial
-        // this.enemigof = new Enemigo(this, 5000, 100);
-        // this.enemigof.setScale(20); 
-        // this.enemigof.setTint(0x00FFFF);
-        // this.physics.add.collider(this.enemigof, plataformas);
-        // this.physics.add.overlap(this.jugador, this.enemigof, this.colisionEnemigo, null, this);
+            console.log("No hay capa de powerups");
+        }   
 
         //Camara que sigue al jugador
         this.cameras.main.startFollow(this.jugador, true);
@@ -149,18 +142,20 @@ export default class EscenaBase extends Phaser.Scene {
             }
             )};
 
-            if(map.getObjectLayer('enemigos') != null) {
-                this.objetos = map.getObjectLayer('enemigos').objects;
-                this.gusanos = this.physics.add.group({
-                    allowGravity: false, immovable: true
-                });
-                this.objetos.forEach(objeto => {
-                    this.gusanos.add(new Enemigo(this, objeto.x * escalaVertical, objeto.y * escalaVertical));            
-                });
-            }
-            else {
-                console.log("No hay capa de objetos enemigo");
-            }
+        if(map.getObjectLayer('enemigos') != null) {
+            this.objetos = map.getObjectLayer('enemigos').objects;
+            this.gusanos = this.physics.add.group({
+                 allowGravity: false, immovable: true
+            });
+            this.objetos.forEach(objeto => {
+                this.gusanos.add(new Enemigo(this, objeto.x * escalaVertical, objeto.y * escalaVertical));            
+            });
+        }
+        else {
+            console.log("No hay capa de objetos enemigo");
+        }
+
+        //Boss
         this.enemigof = this.gusanos.getChildren()[26];
         this.enemigof.setScale(10);
         this.enemigof.setTint(0x00FFFF);
