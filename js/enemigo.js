@@ -5,10 +5,14 @@ export default class Enemigo extends Phaser.Physics.Arcade.Sprite {
     this.escena.add.existing(this);
     this.escena.physics.add.existing(this);
     this.setCollideWorldBounds(true);
-    this.setBounce(0.1); 
-    const velocidadX = Phaser.Math.Between(-150, 150);
-    const velocidadY = Phaser.Math.Between(-150, 150);
-    this.setVelocity(velocidadX, velocidadY);
+
+    this.body.allowGravity = false;
+
+    this.body.immovable = true;
+   // this.setBounce(0.1); 
+    
+        this.direccion = 1;
+        this.velocidad = 100;
 
     this.scene.anims.create({
             key: 'gusano_anim',
@@ -23,6 +27,6 @@ export default class Enemigo extends Phaser.Physics.Arcade.Sprite {
   }
    
   update() {
-    
+    this.setVelocityX(this.velocidad * this.direccion);
   }
 }

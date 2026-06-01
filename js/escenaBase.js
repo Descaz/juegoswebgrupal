@@ -28,8 +28,8 @@ export default class EscenaBase extends Phaser.Scene {
         this.load.image('moneda', './resources/moneda.png');
         this.load.image('personaje', './resources/spr_andando2.png');
         this.load.image('bala', './resources/assets/Tiles/tile_0044.png');
-        this.load.image('gusano_frame1', 'resources/assets/Tiles/tile_0055.png');
-        this.load.image('gusano_frame2', 'resources/assets/Tiles/tile_0056.png');
+        this.load.image('gusano_frame1', './resources/assets/Tiles/tile_0055.png');
+        this.load.image('gusano_frame2', './resources/assets/Tiles/tile_0056.png');
         this.load.image('pistola', './resources/assets/Tiles/tile_0050.png');        
         //carga de sonidos
         this.load.audio('saltar', './resources/SoundJump1.wav'); //salto
@@ -140,18 +140,19 @@ export default class EscenaBase extends Phaser.Scene {
         
         if(map.getObjectLayer('enemigos') != null) {
             this.objetos = map.getObjectLayer('enemigos').objects;
+            this.gusanos = this.physics.add.group({allowGravity: false, immovable: true});
+
             this.objetos.forEach(objeto => {
-                this.enemigo = new Enemigo(this, objeto.x*4, objeto.y*4).setScale(4);
-                this.physics.add.collider(this.enemigo, plataformas);
-                this.physics.add.collider(this.balaGroup, this.enemigo,
-                    (objeto) => {
-                        objeto.destroy();
+                this.gusanos.add(new Enemigo(this, objeto.x*4, objeto.y*4).setScale(4));
+                this.physics.add.collider(this.gusanos, plataformas);
+                this.physics.add.collider(this.balaGroup, this.gusanos,
+                    (bala, enemigo) => {
+                        enemigo.destroy();
                         this.sonidoKill.play(); 
                         this.updatePuntos(25);                        
                     }                
                 )
-                this.physics.add.collider(this.enemigo, this.jugador, this.colisionEnemigo, null, this);  
-                this.physics.add.collider(this.enemigo, muerte, this.enemigoMuerto, null, this);   
+                   
                 //this.aiEnemigo();              
             });
         }
@@ -159,6 +160,9 @@ export default class EscenaBase extends Phaser.Scene {
             console.log("No hay capa de objetos enemigo");
         }
         
+                this.physics.add.collider(this.gusanos, this.jugador, this.colisionEnemigo, null, this);  
+                this.physics.add.collider(this.gusanos, muerte, this.enemigoMuerto, null, this);
+
         this.txtMarcador = this.add.text(10, 20, 'Puntos: ' + puntos);
         this.txtMarcador.setFontSize(30);
         this.txtMarcador.setStyle({fontStyle: 'bold italic'});
@@ -185,7 +189,11 @@ export default class EscenaBase extends Phaser.Scene {
         if(vida <= 0) {
             this.gameOver();
             vida = 3;
-        }    
+        } 
+          
+        this.gusanos.getChildren().forEach(e => {
+            if (e.active) e.update();
+}); 
     }
 
     updatePuntos(p) {

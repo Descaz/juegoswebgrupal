@@ -3,11 +3,12 @@ export default class BalaGroup extends Phaser.Physics.Arcade.Group {
 		super(escena.physics.world, escena);	
 		this.createMultiple({
 			classType: Bala, 
-			frameQuantity: 5000, //Cantidad de balas
+			frameQuantity: 20, //Cantidad de balas
 			setAllowGravity: false,
 			active: false,
 			visible: false,
-			key: 'bala'            
+			key: 'bala'   
+			         
 		})
 	}
 
@@ -58,12 +59,13 @@ export class Bala extends Phaser.Physics.Arcade.Sprite {
 		this.setScale(2);		
 	}
 	
+	
 	preUpdate(time, delta) {
 		super.preUpdate(time, delta);
-		if(this.x > 20000 || this.x < -20000) {
-			this.setActive(false);
-			this.setVisible(false);
-						
-		}
+		const bounds = this.scene.physics.world.bounds;
+		if (this.x > bounds.right || this.x < bounds.left || this.y > bounds.bottom || this.y < bounds.top) {
+    this.setActive(false);
+    this.setVisible(false);
+}
 	}
 }
