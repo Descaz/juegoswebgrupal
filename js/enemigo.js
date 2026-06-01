@@ -1,3 +1,9 @@
+/**
+ * Clase que gestiona un objeto enemigo (gusanos).
+ * 
+ * 
+ */
+
 export default class Enemigo extends Phaser.Physics.Arcade.Sprite {
   constructor(escena, x, y) {
     super(escena, x, y, 'gusano_frame1');

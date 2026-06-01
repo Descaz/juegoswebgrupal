@@ -1,3 +1,8 @@
+/**
+ * Clase que crea la introduccion del juego.
+ * 
+ * 
+ */
 
 export class Start extends Phaser.Scene {
 

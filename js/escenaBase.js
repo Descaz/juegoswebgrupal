@@ -2,7 +2,7 @@ import Personaje from './personaje.js';
 import Enemigo from './enemigo.js';
 import BalaGroup from './bala.js';
 import Bala from './bala.js';
-import Gusano from './Gusano.js';
+import Gusano from './gusano.js';
 var powerup = false;
 var puntos = 0;
 var vida = 3;

@@ -1,3 +1,9 @@
+/**
+ * Clase que gestiona las animaciones del gusano.
+ * 
+ * 
+ */
+
 export default  class Gusano extends Phaser.Physics.Arcade.Sprite {
 
     constructor(scene, x, y, gusano_frame1, xMin, xMax){

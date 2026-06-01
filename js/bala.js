@@ -1,3 +1,9 @@
+/**
+ * Clase que crea un objeto bala y un "pool" de balas (group).
+ * 
+ * 
+ */
+
 export default class BalaGroup extends Phaser.Physics.Arcade.Group {
     constructor(escena) {		
 		super(escena.physics.world, escena);	
