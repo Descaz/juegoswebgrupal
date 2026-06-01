@@ -12,7 +12,7 @@ export default class Enemigo extends Phaser.Physics.Arcade.Sprite {
    // this.setBounce(0.1); 
     
         this.direccion = 1;
-        this.velocidad = 200;
+        this.velocidad = 300;
 
   if(!this.scene.anims.exists('gusano_anim')) {
 

@@ -145,7 +145,7 @@ export default class EscenaBase extends Phaser.Scene {
         if(map.getObjectLayer('enemigos') != null) {
             this.objetos = map.getObjectLayer('enemigos').objects;
             this.gusanos = this.physics.add.group({
-                 allowGravity: false, immovable: true
+                allowGravity: false, immovable: true
             });
             this.objetos.forEach(objeto => {
                 this.gusanos.add(new Enemigo(this, objeto.x * escalaVertical, objeto.y * escalaVertical));            
@@ -281,7 +281,7 @@ export default class EscenaBase extends Phaser.Scene {
         this.txtVidaBoss.setStyle({fontStyle: 'bold italic'});
         this.txtVidaBoss.setFill('#810101');
         this.txtVidaBoss.setScrollFactor(0);
-        this.txtVidaBoss.visible = false;
+        this.txtVidaBoss.visible = false;     
     }
 
     update() {
@@ -289,8 +289,7 @@ export default class EscenaBase extends Phaser.Scene {
         if(vida <= 0) {
             this.gameOver();
             vida = 3;
-        } 
-          
+        }  
         this.gusanos.getChildren().forEach(e => {
             if (e.active) e.update()});
         
@@ -313,8 +312,7 @@ export default class EscenaBase extends Phaser.Scene {
             }
         });
     }      
-           
-
+        
     abejaDispara(abejaRecibida) {
         let bala = this.balasEnemigas.create(abejaRecibida.x, abejaRecibida.y, 'circulo_test');
         if (bala) {
@@ -365,6 +363,18 @@ export default class EscenaBase extends Phaser.Scene {
         this.scene.restart();        
     }
 
+    win() {
+        this.txtWin = this.add.text(600, 350, '¡HAS GANADO! \n\n');
+        this.txtWin2 = this.add.text(500, 500, 'Cierre la ventana para salir');
+        this.txtWin.setFontSize(100);
+        this.txtWin.setStyle({fontStyle: 'bold italic'});
+        this.txtWin.setFill('#2e0181');
+        this.txtWin2.setFontSize(60);
+        this.txtWin2.setStyle({fontStyle: 'bold italic'});
+        this.txtWin2.setFill('#2e0181');      
+        this.scene.pause();
+    }
+
     enemigoMuerto(enemigo) {
         this.sonidoKill.play();   
         enemigo.destroy();       
@@ -388,14 +398,6 @@ export default class EscenaBase extends Phaser.Scene {
         this.balaGroup.dispararBala(this.jugador.x + 40, this.jugador.y, direccion, 2);
         this.sonidoDisparo.play();
     }
-    
-    /*aiEnemigo(enem) {
-        while(enem != null) {
-            this.time.delayedCall(3000, () => { //timer duracion powerup
-                this.balaGroup.dispararBala(enem.x + 40, enem.y, direccion, 0);
-            });
-        }
-    }*/
 
     recogerArma(municion) {        
         this.updateBalas(-30);
@@ -428,7 +430,8 @@ export default class EscenaBase extends Phaser.Scene {
         if(vidaBoss <= 0) {
             this.txtVidaBoss.visible = false;
             this.enemigoMuerto(enem);
-            this.updatePuntos(5000);  
+            this.updatePuntos(5000); 
+            this.win(); 
         }
         else {
             if(!this.txtVidaBoss.visible) {
