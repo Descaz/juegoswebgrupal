@@ -64,8 +64,8 @@ export class Bala extends Phaser.Physics.Arcade.Sprite {
 		super.preUpdate(time, delta);
 		const bounds = this.scene.physics.world.bounds;
 		if (this.x > bounds.right || this.x < bounds.left || this.y > bounds.bottom || this.y < bounds.top) {
-    this.setActive(false);
-    this.setVisible(false);
-}
+    		this.setActive(false);
+    		this.setVisible(false);
+		}
 	}
 }
