@@ -162,7 +162,12 @@ export default class EscenaBase extends Phaser.Scene {
         else {
             console.log("No hay capa de objetos enemigo");
         }
-                
+       //Enemigo especial 
+        this.enemigof = this.gusanos.getChildren()[4];
+        this.enemigof.setScale(10);
+        this.enemigof.setTint(0x00FFFF);
+        this.enemigof.velocidad = 600;
+        
         this.physics.add.overlap(this.gusanos, this.barrerasGroup, (enemigo, barrera) => {
             if (enemigo.x < barrera.x) enemigo.direccion = -1       
             else {enemigo.direccion = 1}}, 
@@ -175,7 +180,8 @@ export default class EscenaBase extends Phaser.Scene {
             (bala, enemigo) => {
                 enemigo.destroy();
                 this.sonidoKill.play(); 
-                this.updatePuntos(25);                        
+                const esBoss = (enemigo === this.enemigof);
+                this.updatePuntos(esBoss ? 100 : 25);                        
                 });  
         this.physics.add.collider(this.gusanos, muerte, this.enemigoMuerto, null, this);
         
