@@ -451,8 +451,8 @@ export default class EscenaBase extends Phaser.Scene {
         this.invulnerableBoss = true;
         enem.setTint(0xff0000);
         this.sonidoDmg.play();  
-        this.updateVidaBoss(1);      
-        this.time.delayedCall(500, () => {
+        this.updateVidaBoss(2);      
+        this.time.delayedCall(250, () => {
             this.invulnerableBoss = false;
             enem.setTint(0x00FFFF);              
         });         
