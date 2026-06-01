@@ -199,30 +199,34 @@ export default class EscenaBase extends Phaser.Scene {
         this.abejas = this.physics.add.group();
         this.balasEnemigas = this.physics.add.group();
 
-        // AQUÍ AÑADES TODAS LAS ABEJAS QUE QUIERAS [x, y]
-        const listaPosiciones = [
-            [600, 700], 
-            [1200, 600], 
-            [2500, 750],
-            [3500, 650] 
+        // ABEJAS
+        const configuracionEnjambres = [
+            [1000, 400, 1],   
+            [5000, 500, 2], 
+            [10000, 300, 4], 
+            [15000, 450, 5], 
+            [18500, 400, 6]
         ];
 
-        listaPosiciones.forEach(pos => {
-        // Restamos 150 a pos[1] para que todas nazcan más arriba de la posición marcada
-        let abeja = this.abejas.create(pos[0], pos[1] - 150, 'abeja_vuelo'); 
-        
-        abeja.setScale(4);
-        abeja.body.setAllowGravity(false);
-        abeja.play('vuelo_abeja');
-        abeja.setDepth(100);
-        
-        // IMPORTANTE: La posición inicial de patrulla también debe ser la nueva altura
-        abeja.posInicialX = pos[0];
-        abeja.distancia = 250;
-        abeja.dir = 1;
-    });
+        configuracionEnjambres.forEach(enjambre => {
+            const [cX, cY, cantidad] = enjambre;
+            for (let i = 0; i < cantidad; i++) {
+                let offsetX = i * 64; 
+                let offsetY = Math.random() * 60 - 30; // Variación de altura
+                let abeja = this.abejas.create(cX + offsetX, cY + offsetY, 'abeja_vuelo'); 
+                
+                abeja.setScale(4);
+                abeja.body.setAllowGravity(false);
+                abeja.play('vuelo_abeja');
+                abeja.setDepth(100);
+                
+                abeja.posInicialX = cX + offsetX;
+                abeja.distancia = 200;
+                abeja.dir = (i % 2 === 0) ? 1 : -1; 
+            }
+        });
 
-        // Colisiones del grupo de abejas
+        
         this.physics.add.overlap(this.jugador, this.abejas, this.colisionEnemigo, null, this);
         this.physics.add.overlap(this.jugador, this.balasEnemigas, (jugador, bala) => {
             bala.destroy();
@@ -237,7 +241,7 @@ export default class EscenaBase extends Phaser.Scene {
             this.updatePuntos(50);
         }, null, this);
 
-        // Timer de disparo con rango de visión (600px)
+        
         this.time.addEvent({
             delay: 2000,
             callback: () => {
@@ -250,6 +254,8 @@ export default class EscenaBase extends Phaser.Scene {
             },
             loop: true
         });
+
+        // TERMINA ABEJAS
 
         this.txtMarcador = this.add.text(10, 20, 'Puntos: ' + puntos);
         this.txtMarcador.setFontSize(30);
