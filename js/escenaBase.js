@@ -7,7 +7,7 @@ var powerup = false;
 var puntos = 0;
 var vida = 3;
 var vidaBoss = 100;
-var balas = 0;
+var balas = 5000;
 
 
 /**
@@ -179,7 +179,10 @@ export default class EscenaBase extends Phaser.Scene {
                 }
                 else {                    
                     this.enemigoMuerto(enemigo);
-                }                       
+                } 
+                bala.setActive(false);
+                bala.setVisible(false);
+                bala.body.stop();                  
             });  
         //this.physics.add.collider(this.gusanos, muerte, this.enemigoMuerto, null, this);
         
