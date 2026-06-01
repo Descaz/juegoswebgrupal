@@ -284,7 +284,20 @@ export default class EscenaBase extends Phaser.Scene {
         this.txtVidaBoss.setStyle({fontStyle: 'bold italic'});
         this.txtVidaBoss.setFill('#810101');
         this.txtVidaBoss.setScrollFactor(0);
-        this.txtVidaBoss.visible = false;     
+        this.txtVidaBoss.visible = false;   
+        
+        this.txtWin = this.add.text(600, 350, '¡HAS GANADO! \n\n');
+        this.txtWin.setFontSize(100);
+        this.txtWin.setStyle({fontStyle: 'bold italic'});
+        this.txtWin.setFill('#2e0181');
+        this.txtWin.setScrollFactor(0);
+        this.txtWin.visible = false;   
+        this.txtWin2 = this.add.text(500, 500, 'Cierre la ventana para salir');
+        this.txtWin2.setFontSize(60);
+        this.txtWin2.setStyle({fontStyle: 'bold italic'});
+        this.txtWin2.setFill('#2e0181');
+        this.txtWin2.setScrollFactor(0);
+        this.txtWin2.visible = false;   
     }
 
     update() {
@@ -314,6 +327,13 @@ export default class EscenaBase extends Phaser.Scene {
                 abeja.y += Math.sin(this.time.now / 200) * 2;
             }
         });
+
+        if(vidaBoss <= 0) {
+            this.txtVidaBoss.visible = false;
+            this.enemigoMuerto(this.enemigof);
+            this.updatePuntos(5000); 
+            this.win(); 
+        }
     }      
         
     abejaDispara(abejaRecibida) {
@@ -366,16 +386,10 @@ export default class EscenaBase extends Phaser.Scene {
         this.scene.restart();        
     }
 
-    win() {
-        this.txtWin = this.add.text(600, 350, '¡HAS GANADO! \n\n');
-        this.txtWin2 = this.add.text(500, 500, 'Cierre la ventana para salir');
-        this.txtWin.setFontSize(100);
-        this.txtWin.setStyle({fontStyle: 'bold italic'});
-        this.txtWin.setFill('#2e0181');
-        this.txtWin2.setFontSize(60);
-        this.txtWin2.setStyle({fontStyle: 'bold italic'});
-        this.txtWin2.setFill('#2e0181');      
-        this.scene.pause();
+    win() {      
+        this.txtWin.visible = true;  
+        this.txtWin2.visible = true;    
+        this.scene.pause();               
     }
 
     enemigoMuerto(enemigo) {
@@ -420,7 +434,7 @@ export default class EscenaBase extends Phaser.Scene {
         this.invulnerable = true;
         this.jugador.setTint(0xff0000);
         this.sonidoDmg.play();                
-        this.time.delayedCall(1000, () => {
+        this.time.delayedCall(1000000, () => {
             this.invulnerable = false;
             this.jugador.clearTint();      
             
@@ -429,18 +443,10 @@ export default class EscenaBase extends Phaser.Scene {
         this.updatePuntos(-25);             
     }  
     
-    colisionEnemigoBalaBoss(enem) {     
-        if(vidaBoss <= 0) {
-            this.txtVidaBoss.visible = false;
-            this.enemigoMuerto(enem);
-            this.updatePuntos(5000); 
-            this.win(); 
+    colisionEnemigoBalaBoss(enem) {        
+        if(!this.txtVidaBoss.visible) {
+            this.txtVidaBoss.visible = true;
         }
-        else {
-            if(!this.txtVidaBoss.visible) {
-                this.txtVidaBoss.visible = true;
-            }
-            this.updateVidaBoss(1);
-        }
-    } 
+        this.updateVidaBoss(1);
+     } 
 }
