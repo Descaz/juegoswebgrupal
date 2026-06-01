@@ -14,6 +14,9 @@ export default class Enemigo extends Phaser.Physics.Arcade.Sprite {
         this.direccion = 1;
         this.velocidad = 100;
 
+  if(!this.scene.anims.exists('gusano_anim')) {
+
+        
     this.scene.anims.create({
             key: 'gusano_anim',
             frames: [
@@ -22,11 +25,13 @@ export default class Enemigo extends Phaser.Physics.Arcade.Sprite {
             ],
             frameRate: 4,
             repeat: -1
-        });
-        this.play('gusano_anim')
+    });
   }
-   
+  this.play('gusano_anim');
+  this.setScale(4);
+}
   update() {
     this.setVelocityX(this.velocidad * this.direccion);
+    this.setFlipX(this.direccion === -1);
   }
 }

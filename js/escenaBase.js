@@ -42,6 +42,7 @@ export default class EscenaBase extends Phaser.Scene {
     }   
 
     create() {   
+        this.invulnerable = false;
         //creamos el mapa    
         const map = this.make.tilemap({key : 'mapa1'});
         const tileset = map.addTilesetImage('tiles2', 'tileset');        
@@ -118,18 +119,18 @@ export default class EscenaBase extends Phaser.Scene {
         
 
         //Creacion enemigo especial
-        this.enemigof = new Enemigo(this, 5000, 100);
-        this.enemigof.setScale(20); 
-        this.enemigof.setTint(0x00FFFF);
-        this.physics.add.collider(this.enemigof, plataformas);
-        this.physics.add.overlap(this.jugador, this.enemigof, this.colisionEnemigo, null, this);
+        // this.enemigof = new Enemigo(this, 5000, 100);
+        // this.enemigof.setScale(20); 
+        // this.enemigof.setTint(0x00FFFF);
+        // this.physics.add.collider(this.enemigof, plataformas);
+        // this.physics.add.overlap(this.jugador, this.enemigof, this.colisionEnemigo, null, this);
 
         //Camara que sigue al jugador
         this.cameras.main.startFollow(this.jugador, true);
         //Creacion bala group
         this.balaGroup = new BalaGroup(this);
         this.addEvents();       
-        this.physics.add.collider(this.balaGroup, this.enemigof, this.colisionEnemigoBalaBoss, null, this);
+        //this.physics.add.collider(this.balaGroup, this.enemigof, this.colisionEnemigoBalaBoss, null, this);
         this.physics.add.collider(this.balaGroup, plataformas,
             (bala) => {
                 bala.setActive(false);
@@ -137,21 +138,23 @@ export default class EscenaBase extends Phaser.Scene {
                 bala.body.stop();
             }
         )
-        
+        //Layer de barreras
+        if(map.getObjectLayer('barreras') != null){
+            this.barrerasGroup = this.physics.add.staticGroup();
+            map.getObjectLayer('barreras').objects.forEach(barrera => {
+                const sprite = this.barrerasGroup.create(barrera.x * escalaVertical, barrera.y * escalaVertical, null);
+        sprite.setVisible(false);
+        sprite.refreshBody();
+        }
+    )};
+
         if(map.getObjectLayer('enemigos') != null) {
             this.objetos = map.getObjectLayer('enemigos').objects;
             this.gusanos = this.physics.add.group({allowGravity: false, immovable: true});
 
             this.objetos.forEach(objeto => {
-                this.gusanos.add(new Enemigo(this, objeto.x*4, objeto.y*4).setScale(4));
-                this.physics.add.collider(this.gusanos, plataformas);
-                this.physics.add.collider(this.balaGroup, this.gusanos,
-                    (bala, enemigo) => {
-                        enemigo.destroy();
-                        this.sonidoKill.play(); 
-                        this.updatePuntos(25);                        
-                    }                
-                )
+                this.gusanos.add(new Enemigo(this, objeto.x * escalaVertical, objeto.y * escalaVertical));
+                
                    
                 //this.aiEnemigo();              
             });
@@ -159,10 +162,23 @@ export default class EscenaBase extends Phaser.Scene {
         else {
             console.log("No hay capa de objetos enemigo");
         }
+                
+        this.physics.add.overlap(this.gusanos, this.barrerasGroup, (enemigo, barrera) => {
+            if (enemigo.x < barrera.x) enemigo.direccion = -1       
+            else {enemigo.direccion = 1}}, 
+            null, this);
+    
         
-                this.physics.add.collider(this.gusanos, this.jugador, this.colisionEnemigo, null, this);  
-                this.physics.add.collider(this.gusanos, muerte, this.enemigoMuerto, null, this);
 
+        this.physics.add.collider(this.gusanos, this.jugador, this.colisionEnemigo, null, this);
+        this.physics.add.collider(this.balaGroup, this.gusanos,
+            (bala, enemigo) => {
+                enemigo.destroy();
+                this.sonidoKill.play(); 
+                this.updatePuntos(25);                        
+                });  
+        this.physics.add.collider(this.gusanos, muerte, this.enemigoMuerto, null, this);
+        
         this.txtMarcador = this.add.text(10, 20, 'Puntos: ' + puntos);
         this.txtMarcador.setFontSize(30);
         this.txtMarcador.setStyle({fontStyle: 'bold italic'});
@@ -292,9 +308,9 @@ export default class EscenaBase extends Phaser.Scene {
         this.updatePuntos(-25);             
     }  
     
-    colisionEnemigoBalaBoss(balaGroup, enemigo2) {     
-        this.enemigof.destroy();
-        this.sonidoKill.play();    
-        this.updatePuntos(100);  
-    } 
+    // colisionEnemigoBalaBoss(balaGroup, enemigo2) {     
+    //     this.enemigof.destroy();
+    //     this.sonidoKill.play();    
+    //     this.updatePuntos(100);  
+    // } 
 }
