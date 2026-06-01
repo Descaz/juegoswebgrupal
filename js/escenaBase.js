@@ -7,7 +7,7 @@ var powerup = false;
 var puntos = 0;
 var vida = 3;
 var vidaBoss = 100;
-var balas = 150;
+var balas = 0;
 
 
 /**
