@@ -87,7 +87,7 @@ export default class EscenaBase extends Phaser.Scene {
         this.sonidoDisparo = this.sound.add('disparo');
         this.sonidoPowerUp = this.sound.add('powerup');
         //creamos al personaje del jugador y asignamos colliders
-        this.jugador = new Personaje(this, 8000, 820, this.sonidoSalto);
+        this.jugador = new Personaje(this, 40, 820, this.sonidoSalto);
         this.jugador.setScale(4); 
         this.physics.add.collider(this.jugador, plataformas);       
         this.physics.add.collider(this.jugador, muerte, this.gameOver, null, this);        
