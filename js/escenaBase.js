@@ -434,7 +434,7 @@ export default class EscenaBase extends Phaser.Scene {
         this.invulnerable = true;
         this.jugador.setTint(0xff0000);
         this.sonidoDmg.play();                
-        this.time.delayedCall(1000000, () => {
+        this.time.delayedCall(1000, () => {
             this.invulnerable = false;
             this.jugador.clearTint();      
             
