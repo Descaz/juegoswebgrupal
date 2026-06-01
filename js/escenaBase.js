@@ -30,6 +30,8 @@ export default class EscenaBase extends Phaser.Scene {
         this.load.image('bala', './resources/assets/Tiles/tile_0044.png');
         this.load.image('gusano_frame1', './resources/assets/Tiles/tile_0055.png');
         this.load.image('gusano_frame2', './resources/assets/Tiles/tile_0056.png');
+        this.load.image('abeja_vuelo', 'resources/assets/Tiles/tile_0051.png');
+        this.load.image('abeja_vuelo2', 'resources/assets/Tiles/tile_0052.png');
         this.load.image('pistola', './resources/assets/Tiles/tile_0050.png');        
         //carga de sonidos
         this.load.audio('saltar', './resources/SoundJump1.wav'); //salto
@@ -43,6 +45,13 @@ export default class EscenaBase extends Phaser.Scene {
 
     create() {   
         this.invulnerable = false;
+
+        // bala abeja
+        const graphics = this.make.graphics({ x: 0, y: 0, add: false });
+        graphics.fillStyle(0xff0000, 1); // Rojo
+        graphics.fillCircle(5, 5, 5); 
+        graphics.generateTexture('circulo_test', 10, 10);
+
         //creamos el mapa    
         const map = this.make.tilemap({key : 'mapa1'});
         const tileset = map.addTilesetImage('tiles2', 'tileset');        
@@ -83,40 +92,31 @@ export default class EscenaBase extends Phaser.Scene {
         this.physics.add.collider(this.jugador, muerte, this.gameOver, null, this);        
         this.jugador.setCollideWorldBounds(true);          
 
-        //creamos el arma
+        //creamos pistolas
         if(map.getObjectLayer('municion') != null) {
             this.pistolas = map.getObjectLayer('municion').objects;
             this.pistolas.forEach(objeto => {
                 this.pistola = this.physics.add.staticSprite(objeto.x*4, objeto.y*4, 'pistola');
                 this.pistola.setScale(3);
-                this.physics.add.collider(this.pistola, this.jugador, this.recogerArma, null, this);
-        
+                this.physics.add.collider(this.pistola, this.jugador, this.recogerArma, null, this);        
             });
         }
         else {
             console.log("No hay capa de pistolas");
         }
 
-        /*//creamos el arma
+        //creamos powerups
         if(map.getObjectLayer('powerups') != null) {
-            this.powers = map.getObjectLayer('powerups').objects;
-            this.powers.forEach(objeto => {
+            this.power = map.getObjectLayer('powerups').objects;
+            this.power.forEach(objeto => {
                 this.powerup = this.physics.add.staticSprite(objeto.x*4, objeto.y*4, 'pistola');
                 this.powerup.setScale(3);
-                this.powerup.setTint(0x00FFFF);
-                this.physics.add.overlap(
-                    this.jugador,
-                    this.powerup,
-                    this.jugador.recogerPowerUp,
-                    null,
-                    this.jugador
-                );
+                this.physics.add.collider(this.powerup, this.jugador, this.recogerPowerUp, null, this);        
             });
         }
         else {
             console.log("No hay capa de pistolas");
-        }*/
-        
+        }        
 
         //Creacion enemigo especial
         // this.enemigof = new Enemigo(this, 5000, 100);
@@ -179,6 +179,72 @@ export default class EscenaBase extends Phaser.Scene {
                 });  
         this.physics.add.collider(this.gusanos, muerte, this.enemigoMuerto, null, this);
         
+        // ENEMIGO ABEJA
+        // animacion vuelo
+        if (!this.anims.exists('vuelo_abeja')) {
+            this.anims.create({
+                key: 'vuelo_abeja',
+                frames: [{ key: 'abeja_vuelo' }, { key: 'abeja_vuelo2' }],
+                frameRate: 8,
+                repeat: -1
+            });
+        }
+
+        this.abejas = this.physics.add.group();
+        this.balasEnemigas = this.physics.add.group();
+
+        // AQUÍ AÑADES TODAS LAS ABEJAS QUE QUIERAS [x, y]
+        const listaPosiciones = [
+            [600, 700], 
+            [1200, 600], 
+            [2500, 750],
+            [3500, 650] 
+        ];
+
+        listaPosiciones.forEach(pos => {
+        // Restamos 150 a pos[1] para que todas nazcan más arriba de la posición marcada
+        let abeja = this.abejas.create(pos[0], pos[1] - 150, 'abeja_vuelo'); 
+        
+        abeja.setScale(4);
+        abeja.body.setAllowGravity(false);
+        abeja.play('vuelo_abeja');
+        abeja.setDepth(100);
+        
+        // IMPORTANTE: La posición inicial de patrulla también debe ser la nueva altura
+        abeja.posInicialX = pos[0];
+        abeja.distancia = 250;
+        abeja.dir = 1;
+    });
+
+        // Colisiones del grupo de abejas
+        this.physics.add.overlap(this.jugador, this.abejas, this.colisionEnemigo, null, this);
+        this.physics.add.overlap(this.jugador, this.balasEnemigas, (jugador, bala) => {
+            bala.destroy();
+            this.colisionEnemigo(jugador, null); 
+        }, null, this);
+
+        this.physics.add.collider(this.balaGroup, this.abejas, (bala, abeja) => {
+            bala.setActive(false).setVisible(false);
+            if (bala.body) bala.body.stop();
+            abeja.destroy();
+            this.sonidoKill.play();
+            this.updatePuntos(50);
+        }, null, this);
+
+        // Timer de disparo con rango de visión (600px)
+        this.time.addEvent({
+            delay: 2000,
+            callback: () => {
+                this.abejas.getChildren().forEach(abeja => {
+                    let distancia = Phaser.Math.Distance.Between(abeja.x, abeja.y, this.jugador.x, this.jugador.y);
+                    if (distancia < 600) {
+                        this.abejaDispara(abeja);
+                    }
+                });
+            },
+            loop: true
+        });
+
         this.txtMarcador = this.add.text(10, 20, 'Puntos: ' + puntos);
         this.txtMarcador.setFontSize(30);
         this.txtMarcador.setStyle({fontStyle: 'bold italic'});
@@ -208,8 +274,40 @@ export default class EscenaBase extends Phaser.Scene {
         } 
           
         this.gusanos.getChildren().forEach(e => {
-            if (e.active) e.update();
-}); 
+            if (e.active) e.update()});
+        
+        // MOVIMIENTO DE TODAS LAS ABEJAS
+        this.abejas.getChildren().forEach(abeja => {
+            if (abeja.active) {
+                // Movimiento horizontal manual (no se escapa)
+                abeja.x += 2 * abeja.dir;
+
+                if (abeja.x >= abeja.posInicialX + abeja.distancia) {
+                    abeja.dir = -1;
+                    abeja.flipX = true;
+                } else if (abeja.x <= abeja.posInicialX - abeja.distancia) {
+                    abeja.dir = 1;
+                    abeja.flipX = false;
+                }
+
+                // Flotación vertical
+                abeja.y += Math.sin(this.time.now / 200) * 2;
+            }
+        });
+    }
+
+            
+           
+
+        abejaDispara(abejaRecibida) {
+        let bala = this.balasEnemigas.create(abejaRecibida.x, abejaRecibida.y, 'circulo_test');
+        if (bala) {
+            bala.body.setAllowGravity(false);
+            let angulo = Phaser.Math.Angle.Between(abejaRecibida.x, abejaRecibida.y, this.jugador.x, this.jugador.y);
+            bala.setVelocityX(Math.cos(angulo) * 250);
+            bala.setVelocityY(Math.sin(angulo) * 250);
+            this.time.delayedCall(3000, () => { if(bala.active) bala.destroy(); });
+        }
     }
 
     updatePuntos(p) {
@@ -241,12 +339,8 @@ export default class EscenaBase extends Phaser.Scene {
     gameOver() {
         vida = 3;
         puntos = 0;
-        this.registry.destroy();
-        this.events.off();
-        this.scene.restart();
-        /*this.time.delayedCall(3000, function() {
-    this.scene.restart();
-  }, [], this);  */  
+        this.invulnerable = false;
+        this.scene.restart();        
     }
 
     enemigoMuerto(enemigo) {
@@ -266,9 +360,9 @@ export default class EscenaBase extends Phaser.Scene {
     dispararPowerUp() {
         const direccion = this.jugador.flipX ? -1 : 1;
         if (!this.jugador.tieneArma) return;
-        this.balaGroup.dispararBala(this.jugador.x+40, this.jugador.y, direccion, 0);
-        this.balaGroup.dispararBala(this.jugador.x+40, this.jugador.y, direccion, 1);
-        this.balaGroup.dispararBala(this.jugador.x+40, this.jugador.y, direccion, 2);
+        this.balaGroup.dispararBala(this.jugador.x + 40, this.jugador.y, direccion, 0);
+        this.balaGroup.dispararBala(this.jugador.x + 40, this.jugador.y, direccion, 1);
+        this.balaGroup.dispararBala(this.jugador.x + 40, this.jugador.y, direccion, 2);
         this.sonidoDisparo.play();
     }
     
@@ -285,9 +379,9 @@ export default class EscenaBase extends Phaser.Scene {
         this.jugador.recogerArma(this.jugador,municion);
     }
 
-    recogerPowerUp(powerup) {
+    recogerPowerUp(pow) {
         powerup = true;
-        this.jugador.recogerArma(this.jugador, powerup);
+        this.jugador.recogerArma(this.jugador, pow);
         this.time.delayedCall(10000, () => { //timer duracion powerup
             powerup = false; 
         });
@@ -297,8 +391,7 @@ export default class EscenaBase extends Phaser.Scene {
         if (this.invulnerable) return;
         this.invulnerable = true;
         this.jugador.setTint(0xff0000);
-        this.sonidoDmg.play();         
-                
+        this.sonidoDmg.play();                
         this.time.delayedCall(1000, () => {
             this.invulnerable = false;
             this.jugador.clearTint();      
