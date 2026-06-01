@@ -97,8 +97,8 @@ export default class EscenaBase extends Phaser.Scene {
         if(map.getObjectLayer('municion') != null) {
             this.pistolas = map.getObjectLayer('municion').objects;
             this.pistolas.forEach(objeto => {
-                this.pistola = this.physics.add.staticSprite(objeto.x*4, objeto.y*4, 'pistola');
-                this.pistola.setScale(3);
+                this.pistola = this.physics.add.staticSprite(objeto.x*escalaVertical, objeto.y*escalaVertical, 'pistola');
+                this.pistola.setScale(4);
                 this.physics.add.collider(this.pistola, this.jugador, this.recogerArma, null, this);        
             });
         }
@@ -110,8 +110,9 @@ export default class EscenaBase extends Phaser.Scene {
         if(map.getObjectLayer('powerups') != null) {
             this.power = map.getObjectLayer('powerups').objects;
             this.power.forEach(objeto => {
-                this.powerup = this.physics.add.staticSprite(objeto.x*4, objeto.y*4, 'pistola');
-                this.powerup.setScale(3);
+                this.powerup = this.physics.add.staticSprite(objeto.x*escalaVertical, objeto.y*escalaVertical, 'pistola');
+                this.powerup.setScale(4);
+                this.powerup.setTint(0x2787F5);
                 this.physics.add.collider(this.powerup, this.jugador, this.recogerPowerUp, null, this);        
             });
         }
