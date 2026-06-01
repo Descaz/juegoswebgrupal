@@ -448,5 +448,5 @@ export default class EscenaBase extends Phaser.Scene {
             this.txtVidaBoss.visible = true;
         }
         this.updateVidaBoss(1);
-     } 
+    } 
 }
