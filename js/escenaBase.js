@@ -173,7 +173,7 @@ export default class EscenaBase extends Phaser.Scene {
         this.physics.add.collider(this.balaGroup, this.gusanos,
             (bala, enemigo) => {               
                 var esBoss = (enemigo === this.enemigof);
-                this.updatePuntos(esBoss ? 100 : 25);       
+                this.updatePuntos(esBoss ? 0 : 25);       
                 if(esBoss) {
                     this.colisionEnemigoBalaBoss(enemigo);
                 }
