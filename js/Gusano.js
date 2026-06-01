@@ -32,13 +32,11 @@ export default  class Gusano extends Phaser.Physics.Arcade.Sprite {
     }
 
     update(){
-this.setVelocityX(this.velocidad * this.direccion);
-
-if (this.x >= this.xMax) 
-    this.direccion = -1;
-else if (this.x <= this.xMin)
-    this.direccion = 1;
-
+    this.setVelocityX(this.velocidad * this.direccion);
+    if (this.x >= this.xMax) 
+        this.direccion = -1;
+    else if (this.x <= this.xMin)
+        this.direccion = 1;
     if (this.direccion == 1) this.setFlipX(false)
     else if (this.direccion == -1) this.setFlipX(true)
 }

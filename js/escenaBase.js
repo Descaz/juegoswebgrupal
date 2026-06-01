@@ -6,7 +6,8 @@ import Gusano from './Gusano.js';
 var powerup = false;
 var puntos = 0;
 var vida = 3;
-var balas = 0;
+var vidaBoss = 100;
+var balas = 150;
 
 
 /**
@@ -86,7 +87,7 @@ export default class EscenaBase extends Phaser.Scene {
         this.sonidoDisparo = this.sound.add('disparo');
         this.sonidoPowerUp = this.sound.add('powerup');
         //creamos al personaje del jugador y asignamos colliders
-        this.jugador = new Personaje(this, 40, 820, this.sonidoSalto);
+        this.jugador = new Personaje(this, 8000, 820, this.sonidoSalto);
         this.jugador.setScale(4); 
         this.physics.add.collider(this.jugador, plataformas);       
         this.physics.add.collider(this.jugador, muerte, this.gameOver, null, this);        
@@ -143,47 +144,49 @@ export default class EscenaBase extends Phaser.Scene {
             this.barrerasGroup = this.physics.add.staticGroup();
             map.getObjectLayer('barreras').objects.forEach(barrera => {
                 const sprite = this.barrerasGroup.create(barrera.x * escalaVertical, barrera.y * escalaVertical, null);
-        sprite.setVisible(false);
-        sprite.refreshBody();
-        }
-    )};
+                sprite.setVisible(false);
+                sprite.refreshBody();
+            }
+            )};
 
-        if(map.getObjectLayer('enemigos') != null) {
-            this.objetos = map.getObjectLayer('enemigos').objects;
-            this.gusanos = this.physics.add.group({allowGravity: false, immovable: true});
-
-            this.objetos.forEach(objeto => {
-                this.gusanos.add(new Enemigo(this, objeto.x * escalaVertical, objeto.y * escalaVertical));
-                
-                   
-                //this.aiEnemigo();              
-            });
-        }
-        else {
-            console.log("No hay capa de objetos enemigo");
-        }
-       //Enemigo especial 
-        this.enemigof = this.gusanos.getChildren()[4];
+            if(map.getObjectLayer('enemigos') != null) {
+                this.objetos = map.getObjectLayer('enemigos').objects;
+                this.gusanos = this.physics.add.group({
+                    allowGravity: false, immovable: true
+                });
+                this.objetos.forEach(objeto => {
+                    this.gusanos.add(new Enemigo(this, objeto.x * escalaVertical, objeto.y * escalaVertical));            
+                });
+            }
+            else {
+                console.log("No hay capa de objetos enemigo");
+            }
+        this.enemigof = this.gusanos.getChildren()[26];
         this.enemigof.setScale(10);
         this.enemigof.setTint(0x00FFFF);
-        this.enemigof.velocidad = 600;
-        
-        this.physics.add.overlap(this.gusanos, this.barrerasGroup, (enemigo, barrera) => {
-            if (enemigo.x < barrera.x) enemigo.direccion = -1       
-            else {enemigo.direccion = 1}}, 
-            null, this);
-    
-        
+        this.enemigof.velocidad = 500;
+        this.physics.add.collider(this.enemigof, this.BalaGroup, this.colisionEnemigoBalaBoss, null, this);
+
+        this.physics.add.overlap(this.gusanos, this.barrerasGroup, 
+            (enemigo, barrera) => {
+                if (enemigo.x < barrera.x) enemigo.direccion = -1       
+                else {enemigo.direccion = 1}
+            }, 
+            null, this);       
 
         this.physics.add.collider(this.gusanos, this.jugador, this.colisionEnemigo, null, this);
         this.physics.add.collider(this.balaGroup, this.gusanos,
-            (bala, enemigo) => {
-                enemigo.destroy();
-                this.sonidoKill.play(); 
-                const esBoss = (enemigo === this.enemigof);
-                this.updatePuntos(esBoss ? 100 : 25);                        
-                });  
-        this.physics.add.collider(this.gusanos, muerte, this.enemigoMuerto, null, this);
+            (bala, enemigo) => {               
+                var esBoss = (enemigo === this.enemigof);
+                this.updatePuntos(esBoss ? 100 : 25);       
+                if(esBoss) {
+                    this.colisionEnemigoBalaBoss(enemigo);
+                }
+                else {                    
+                    this.enemigoMuerto(enemigo);
+                }                       
+            });  
+        //this.physics.add.collider(this.gusanos, muerte, this.enemigoMuerto, null, this);
         
         // ENEMIGO ABEJA
         // animacion vuelo
@@ -276,6 +279,14 @@ export default class EscenaBase extends Phaser.Scene {
         this.txtBalas.setStyle({fontStyle: 'bold italic'});
         this.txtBalas.setFill('#000');
         this.txtBalas.setScrollFactor(0);
+
+        //marcador de balas 
+        this.txtVidaBoss = this.add.text(650, 860, 'GUSANEITOR: ' + vidaBoss + '%');
+        this.txtVidaBoss.setFontSize(60);
+        this.txtVidaBoss.setStyle({fontStyle: 'bold italic'});
+        this.txtVidaBoss.setFill('#810101');
+        this.txtVidaBoss.setScrollFactor(0);
+        this.txtVidaBoss.visible = false;
     }
 
     update() {
@@ -306,12 +317,10 @@ export default class EscenaBase extends Phaser.Scene {
                 abeja.y += Math.sin(this.time.now / 200) * 2;
             }
         });
-    }
-
-            
+    }      
            
 
-        abejaDispara(abejaRecibida) {
+    abejaDispara(abejaRecibida) {
         let bala = this.balasEnemigas.create(abejaRecibida.x, abejaRecibida.y, 'circulo_test');
         if (bala) {
             bala.body.setAllowGravity(false);
@@ -332,10 +341,16 @@ export default class EscenaBase extends Phaser.Scene {
         this.txtVida.setText('Vida: ' + vida);
     }
 
+    updateVidaBoss(vb) {
+        vidaBoss = vidaBoss - vb; 
+        this.txtVidaBoss.setText('GUSANEITOR: ' + vidaBoss + '%');
+    }
+
     updateBalas(b) {
         balas = balas - b; 
         this.txtBalas.setText('Balas: ' + balas);
     }
+    
 
     addEvents() {
         this.input.on('pointerdown', pointer=> {
@@ -356,7 +371,8 @@ export default class EscenaBase extends Phaser.Scene {
     }
 
     enemigoMuerto(enemigo) {
-        enemigo.destroy();
+        this.sonidoKill.play();   
+        enemigo.destroy();       
     }
 
     disparar() {
@@ -404,7 +420,7 @@ export default class EscenaBase extends Phaser.Scene {
         this.invulnerable = true;
         this.jugador.setTint(0xff0000);
         this.sonidoDmg.play();                
-        this.time.delayedCall(1000, () => {
+        this.time.delayedCall(1000000, () => {
             this.invulnerable = false;
             this.jugador.clearTint();      
             
@@ -413,9 +429,17 @@ export default class EscenaBase extends Phaser.Scene {
         this.updatePuntos(-25);             
     }  
     
-    // colisionEnemigoBalaBoss(balaGroup, enemigo2) {     
-    //     this.enemigof.destroy();
-    //     this.sonidoKill.play();    
-    //     this.updatePuntos(100);  
-    // } 
+    colisionEnemigoBalaBoss(enem) {     
+        if(vidaBoss <= 0) {
+            this.txtVidaBoss.visible = false;
+            this.enemigoMuerto(enem);
+            this.updatePuntos(1000);  
+        }
+        else {
+            if(!this.txtVidaBoss.visible) {
+                this.txtVidaBoss.visible = true;
+            }
+            this.updateVidaBoss(1);
+        }
+    } 
 }
