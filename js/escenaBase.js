@@ -7,7 +7,7 @@ var powerup = false;
 var puntos = 0;
 var vida = 3;
 var vidaBoss = 100;
-var balas = 5000;
+var balas = 0;
 
 
 /**
@@ -46,7 +46,7 @@ export default class EscenaBase extends Phaser.Scene {
 
     create() {   
         this.invulnerable = false;
-
+        this.invulnerableBoss = false;
         // bala abeja
         const graphics = this.make.graphics({ x: 0, y: 0, add: false });
         graphics.fillStyle(0xff0000, 1); // Rojo
@@ -443,10 +443,18 @@ export default class EscenaBase extends Phaser.Scene {
         this.updatePuntos(-25);             
     }  
     
-    colisionEnemigoBalaBoss(enem) {        
+    colisionEnemigoBalaBoss(enem) {   
         if(!this.txtVidaBoss.visible) {
             this.txtVidaBoss.visible = true;
         }
-        this.updateVidaBoss(1);
+        if (this.invulnerableBoss) return;
+        this.invulnerableBoss = true;
+        enem.setTint(0xff0000);
+        this.sonidoDmg.play();  
+        this.updateVidaBoss(1);      
+        this.time.delayedCall(500, () => {
+            this.invulnerableBoss = false;
+            enem.setTint(0x00FFFF);              
+        });         
     } 
 }

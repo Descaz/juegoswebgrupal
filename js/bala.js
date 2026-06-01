@@ -3,7 +3,7 @@ export default class BalaGroup extends Phaser.Physics.Arcade.Group {
 		super(escena.physics.world, escena);	
 		this.createMultiple({
 			classType: Bala, 
-			frameQuantity: 40, //Cantidad de balas
+			frameQuantity: 8, //Cantidad de balas
 			setAllowGravity: false,
 			active: false,
 			visible: false,
