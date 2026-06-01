@@ -382,6 +382,8 @@ export default class EscenaBase extends Phaser.Scene {
     gameOver() {
         vida = 3;
         puntos = 0;
+        balas = 0;
+        vidaBoss = 100;
         this.invulnerable = false;
         this.scene.restart();        
     }
